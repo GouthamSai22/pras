@@ -1,33 +1,55 @@
 import "./index.css";
+import jwt_decode from "jwt-decode";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
-
-const responseSuccessGoogle = (response) => {
-  console.log("Successful login");
-  console.log(response);
-};
-
-const responseFailedGoogle = (response) => {
-  console.log("Failed Login");
-  console.log(response);
-};
 
 function Login() {
   return (
-    <GoogleOAuthProvider clientId="49373822151-e0j7lgasg6ilsvl5e76p50fgibesi8ui.apps.googleusercontent.com">
-      <div>
-        <p>Log in to continue to PRAS.</p>
+    <div>
+      <GoogleOAuthProvider clientId="49373822151-e0j7lgasg6ilsvl5e76p50fgibesi8ui.apps.googleusercontent.com">
+        <div>
+          <h1 className="page-heading">Log in to continue to PRAS.</h1>
+          <center>
+            <GoogleLogin
+              onSuccess={(credentialResponse) => {
+                console.log(credentialResponse);
+                //credentialResponse has profile object and stuff
 
-        <GoogleLogin
-          onSuccess={(credentialResponse) => {
-            console.log(credentialResponse);
-          }}
-          onError={() => {
-            console.log("Login Failed");
-          }}
-          useOneTap
-        />
-      </div>
-    </GoogleOAuthProvider>
+                localStorage.setItem(
+                  "credential",
+                  credentialResponse.credential
+                );
+
+                fetch("http://localhost:8000/auth", {
+                  headers: {
+                    Authorization: credentialResponse.credential,
+                  },
+                })
+                  .then((res) => res.json())
+                  .then((data) => {
+                    console.log(data);
+                    console.log("Data Logged!");
+                    const decoded_token = jwt_decode(
+                      credentialResponse.credential
+                    );
+                    localStorage.setItem("user_name", decoded_token["name"]);
+                    localStorage.setItem("user_email", decoded_token["email"]);
+                    localStorage.setItem("user_pic_url",decoded_token["picture"]);
+                    // Have to figure out how to redirect the page to the home page after this.
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
+              }}
+              onError={() => {
+                console.log("Login Failed");
+              }}
+              useOneTap
+              shape="pill"
+            />
+          </center>
+        </div>
+      </GoogleOAuthProvider>
+    </div>
   );
 }
 
