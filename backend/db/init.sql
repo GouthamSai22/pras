@@ -2,8 +2,8 @@ CREATE TABLE user (
     user_id BIGSERIAL NOT NULL PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
     name VARCHAR(255) NOT NULL,
-    phone_number VARCHAR(15) NOT NULL UNIQUE,
-    room VARCHAR(255) NOT NULL,
+    phone_number VARCHAR(15) UNIQUE,
+    room VARCHAR(255),
     role VARCHAR(15) NOT NULL
 );
 
