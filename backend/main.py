@@ -43,7 +43,7 @@ app.add_middleware(
 queries = aiosql.from_path("db", "psycopg2")
 
 def verify_auth_token(Authorization: str = Header()):
-    email = authn_user(Authorization)
+    email, name, given_name = authn_user(Authorization)
     if email is None:
         raise HTTPException(status_code=401, detail="Invalid token")
     return email

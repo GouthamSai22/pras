@@ -10,8 +10,7 @@ def authn_user(token):
     CLIENT_ID = os.getenv("CLIENT_ID")
     try:
         # Specify the CLIENT_ID of the app that accesses the backend:
-        idinfo = id_token.verify_oauth2_token(token, requests.Request(), GSUITE_DOMAIN_NAME)
-
+        idinfo = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
         # Or, if multiple clients access the backend server:
         # idinfo = id_token.verify_oauth2_token(token, requests.Request())
         if idinfo['aud'] not in [CLIENT_ID]:
@@ -21,13 +20,14 @@ def authn_user(token):
         if idinfo['hd'] != GSUITE_DOMAIN_NAME:
             raise ValueError('Wrong hosted domain. Only IITH users are allowed')
         
-        print(idinfo)
         email = idinfo['email']
+        name = idinfo['name']
+        given_name = idinfo['given_name']
 
         # ID token is valid. Get the user's Google Account ID from the decoded token.
         userid = idinfo['sub']
 
-        return email
+        return email, name, given_name
 
     except ValueError:
         # Invalid token
