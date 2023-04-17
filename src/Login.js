@@ -1,5 +1,5 @@
 import "./index.css";
-import { GoogleLogin } from "@react-oauth/google";
+import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 
 const responseSuccessGoogle = (response) => {
   console.log("Successful login");
@@ -13,15 +13,21 @@ const responseFailedGoogle = (response) => {
 
 function Login() {
   return (
-    <div>
-      <p>Log in to continue to PRAS.</p>
+    <GoogleOAuthProvider clientId="49373822151-e0j7lgasg6ilsvl5e76p50fgibesi8ui.apps.googleusercontent.com">
+      <div>
+        <p>Log in to continue to PRAS.</p>
 
-      <GoogleLogin
-        onSuccess={responseSuccessGoogle}
-        onFailure={responseFailedGoogle}
-        shape="pill"
-      />
-    </div>
+        <GoogleLogin
+          onSuccess={(credentialResponse) => {
+            console.log(credentialResponse);
+          }}
+          onError={() => {
+            console.log("Login Failed");
+          }}
+          useOneTap
+        />
+      </div>
+    </GoogleOAuthProvider>
   );
 }
 
