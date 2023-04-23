@@ -15,9 +15,10 @@ root.render(
         <Route exact path="/" render={() => <App />} />
         <Route path="/login-page" render={() => <Login />} />
         <Route path="/signup-page" render={() => <Signup />} />
+        {/* <Route path="/home" render={() => < />} /> */}
       </Routes>
+      <App />
     </BrowserRouter>
-    <App />
   </React.StrictMode>
 );
 
