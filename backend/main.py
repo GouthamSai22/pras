@@ -11,11 +11,16 @@ from typing import Union, List, Optional
 from auth import authn_user
 from datetime import datetime
 from pydantic import BaseModel, EmailStr
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import Session, sessionmaker, joinedload, relationship
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, BigInteger, String, Integer, DateTime, Boolean, ForeignKey
+import pytz
 
+# Timezone
+IST = pytz.timezone('Asia/Kolkata')
+
+# Load environment variables
 load_dotenv()
 
 # Database credentials
@@ -68,14 +73,16 @@ class DBPackage(Base):
     package_type = Column(String(20), nullable=True)
     status = Column(Integer, default=0)
     owner_name = Column(String(255), nullable=True)
-    arrival = Column(DateTime, default=datetime.utcnow, nullable=False)
+    arrival = Column(DateTime, default=datetime.now(IST), nullable=False)
+
+    collected_packages = relationship("DBCollectedPackage", backref="package")
 
 class DBCollectedPackage(Base):
     __tablename__ = "package_collection"
 
     collected_package_id = Column(BigInteger, ForeignKey("package.package_id"), primary_key=True, index=True)
     collected_by_email = Column(String(255), ForeignKey("user.email"), nullable=False, index=True)
-    collection_time = Column(DateTime, default=datetime.utcnow, nullable=False)
+    collection_time = Column(DateTime, default=datetime.now(IST), nullable=False)
 
 # Pydantic Models
 class User(BaseModel):
@@ -90,14 +97,15 @@ class User(BaseModel):
         orm_mode = True
 
     @classmethod
-    def get_by_email(cls, db: Session, email: str):
+    def get_by_email(cls, db: Session, email: str) -> Optional["User"]:
         user = db.query(DBUser).filter(DBUser.email == email).first()
         if user:
             return User.from_orm(user)
+        return None
 
 
 class Package(BaseModel):
-    id: int
+    package_id: int
     package_number: str
     status: int = 0
     owner_name: Optional[str]
@@ -108,6 +116,19 @@ class Package(BaseModel):
 
     class Config:
         orm_mode = True
+    
+    @classmethod
+    def get_by_id(cls, db: Session, package_id: int) -> Optional["Package"]:
+        package = db.query(DBPackage).filter(DBPackage.package_id == package_id).first()
+        if package:
+            collected_package = db.query(DBCollectedPackage).join(DBPackage).filter(DBPackage.package_id == package_id).first()
+            if collected_package:
+                package_dict = package.__dict__
+                package_dict["collection_time"] = collected_package.collection_time
+                package_dict["collected_by_email"] = collected_package.collected_by_email
+                return Package(**package_dict)
+            return Package.from_orm(package)
+        return None
 
 app = FastAPI()
 
@@ -157,5 +178,11 @@ async def get_user(email: str, db: Session = Depends(get_db)):
     user = User.get_by_email(db, email)
     if user:
         return user
-    else:
-        return {"message": "User not found"}
+    return {"message": "User not found"}
+
+@app.get("/packages/{package_id}")
+async def get_package(package_id: int, db: Session = Depends(get_db)):
+    package = Package.get_by_id(db, package_id)
+    if package:
+        return package
+    return {"message": "Package not found"}

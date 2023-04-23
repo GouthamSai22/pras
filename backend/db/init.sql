@@ -21,5 +21,5 @@ CREATE TABLE package_collection (
     collected_by_email VARCHAR(255),
     collection_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (collected_package_id) REFERENCES package(package_id),
-    FOREIGN KEY (collected_by_email) REFERENCES user(email)
+    FOREIGN KEY (collected_by_email) REFERENCES users(email)
 );
