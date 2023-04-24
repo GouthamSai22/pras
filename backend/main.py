@@ -20,12 +20,18 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
 from jinja2 import Template
+import pytesseract
+from PIL import Image
+from pyzbar import pyzbar
 
 # Timezone
 IST = pytz.timezone('Asia/Kolkata')
 
 # Load environment variables
 load_dotenv()
+
+# initialize pytesseract path
+pytesseract.pytesseract.tesseract_cmd = os.getenv("TESSERACT_PATH")
 
 # Database credentials
 DATABASE = os.getenv("DATABASE")
@@ -185,6 +191,13 @@ def send_email(name, package_id, collected_by, receiver_list):
         print("Email sent!")
     except Exception as err:
         print(err)
+
+def get_details_from_image(img):
+    text = pytesseract.image_to_string(img)
+    barcodes = pyzbar.decode(img)
+    for barcode in barcodes:
+        barcodeData = barcode.data.decode("utf-8")
+    return text, barcodeData
 
 @app.get("/")
 async def root():
