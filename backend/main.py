@@ -16,6 +16,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, BigInteger, String, Integer, DateTime, Boolean, ForeignKey
 import pytz
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import smtplib
+from jinja2 import Template
 
 # Timezone
 IST = pytz.timezone('Asia/Kolkata')
@@ -155,6 +159,33 @@ def verify_auth_token(Authorization: str = Header()):
             "name": name, 
             "picture": picture}
 
+def send_email():
+    gmail_user = os.getenv("GMAIL_USER")
+    gmail_password = os.getenv("GMAIL_PASSWORD")
+    receiver = 'cs20btech11056@iith.ac.in'
+    message = MIMEMultipart("alternative")
+    message["Subject"] = "Package Collected"
+    message["From"] = gmail_user
+    message["To"] = receiver
+    
+    with open("template.html", "r") as f:
+        template_str = f.read()
+    
+    template = Template(template_str)
+    html = template.render(name="Vikhyath", package_id='AWB1002', collected_by='Goutham')
+    part = MIMEText(html, "html")
+    message.attach(part)
+    
+    try:
+        server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
+        server.ehlo()
+        server.login(gmail_user, gmail_password)
+        server.sendmail(gmail_user, receiver, message.as_string())
+        server.close()
+        print("Email sent!")
+    except Exception as err:
+        print(err)
+
 @app.get("/")
 async def root():
     try:
@@ -186,3 +217,5 @@ async def get_package(package_id: int, db: Session = Depends(get_db)):
     if package:
         return package
     return {"message": "Package not found"}
+
+send_email()
