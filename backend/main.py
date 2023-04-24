@@ -159,23 +159,23 @@ def verify_auth_token(Authorization: str = Header()):
             "name": name, 
             "picture": picture}
 
-def send_email():
+def send_email(name, package_id, collected_by, receiver_list):
     gmail_user = os.getenv("GMAIL_USER")
     gmail_password = os.getenv("GMAIL_PASSWORD")
-    receiver = 'cs20btech11056@iith.ac.in'
+    receiver = ', '.join(receiver_list)
     message = MIMEMultipart("alternative")
     message["Subject"] = "Package Collected"
     message["From"] = gmail_user
     message["To"] = receiver
     
-    with open("template.html", "r") as f:
+    with open("collection.html", "r") as f:
         template_str = f.read()
     
     template = Template(template_str)
-    html = template.render(name="Vikhyath", package_id='AWB1002', collected_by='Goutham')
+    html = template.render(name=name, package_id=package_id, collected_by=collected_by)
     part = MIMEText(html, "html")
     message.attach(part)
-    
+
     try:
         server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
         server.ehlo()
@@ -218,4 +218,4 @@ async def get_package(package_id: int, db: Session = Depends(get_db)):
         return package
     return {"message": "Package not found"}
 
-send_email()
+# send_email('Vikhyath', 'AWB1002', 'Goutham', ['cs20btech11056@iith.ac.in', 'cs20btech11042@iith.ac.in', 'cs19btech11051@iith.ac.in', 'es19btech11017@iith.ac.in'])
