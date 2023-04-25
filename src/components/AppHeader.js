@@ -44,6 +44,9 @@ const AppHeader = () => {
             <CNavLink to="/package" component={NavLink}>Package</CNavLink>
           </CNavItem>
           <CNavItem>
+            <CNavLink to="/camera" component={NavLink}>Camera</CNavLink>
+          </CNavItem>
+          <CNavItem>
             <CNavLink href="#">Settings</CNavLink>
           </CNavItem>
         </CHeaderNav>
