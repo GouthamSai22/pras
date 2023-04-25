@@ -41,7 +41,7 @@ const AppHeader = () => {
             </CNavLink>
           </CNavItem>
           <CNavItem>
-            <CNavLink href="#">Users</CNavLink>
+            <CNavLink to="/add-package" component={NavLink}>Package</CNavLink>
           </CNavItem>
           <CNavItem>
             <CNavLink href="#">Settings</CNavLink>
