@@ -11,3 +11,4 @@ Pillow==9.5.0
 Jinja2==3.1.2
 pytesseract==0.3.10
 pyzbar==0.1.9
+nltk==3.8.1

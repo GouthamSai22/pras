@@ -109,6 +109,8 @@ class DBCollectedPackage(Base):
 
 # Pydantic Models
 class User(BaseModel):
+    _instance = None
+
     user_id: int
     email: EmailStr
     name: str
@@ -118,6 +120,11 @@ class User(BaseModel):
 
     class Config:
         orm_mode = True
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(User, cls).__new__(cls)
+        return cls._instance
 
     @classmethod
     def get_by_email(cls, db: Session, email: str) -> Optional["User"]:
@@ -237,7 +244,7 @@ def get_details_from_image(img):
 
     for line in lines:
         if name_detected in line:
-            full_name = line
+            full_name = line.strip()
             break
     
     return {"package_number": barcodeData, "owner_name": full_name}
