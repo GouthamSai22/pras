@@ -305,23 +305,23 @@ const _nav = [
     items: [
       {
         component: CNavItem,
+        name: 'Packages',
+        to: '/package',
+      },
+      {
+        component: CNavItem,
         name: 'AddPackage',
-        to: '/add-package',
+        to: '/package/add-package',
       },
       {
         component: CNavItem,
-        name: 'Register',
-        to: '/register',
+        name: 'DeletePackage',
+        to: '/package/delete-package',
       },
       {
         component: CNavItem,
-        name: 'Error 404',
-        to: '/404',
-      },
-      {
-        component: CNavItem,
-        name: 'Error 500',
-        to: '/500',
+        name: 'ModifyPackage',
+        to: '/package/modify-package',
       },
     ],
   },

@@ -51,7 +51,11 @@ const Toasts = React.lazy(() => import('./views/notifications/toasts/Toasts'))
 const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
 
 // Packages
+const Packages = React.lazy(() => import('./views/pages/package/packageOptions'))
 const AddPackage = React.lazy(() => import('./views/pages/package/addpackage'))
+const DeletePackage = React.lazy(() => import('./views/pages/package/deletePackage'))
+const ModifyPackage = React.lazy(() => import('./views/pages/package/modifyPackage'))
+
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -98,7 +102,10 @@ const routes = [
   { path: '/notifications/modals', name: 'Modals', element: Modals },
   { path: '/notifications/toasts', name: 'Toasts', element: Toasts },
   { path: '/widgets', name: 'Widgets', element: Widgets },
-  { path: '/add-package', name: 'AddPackage', element: AddPackage },
+  { path: '/package', name: 'Packages', element: Packages },
+  { path: '/package/add-package', name: 'AddPackage', element: AddPackage },
+  { path: '/package/delete-package', name: 'DeletePackage', element: DeletePackage },
+  { path: '/package/modify-package', name: 'ModifyPackage', element: ModifyPackage },
 ]
 
 export default routes

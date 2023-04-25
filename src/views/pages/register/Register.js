@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 import {
   CButton,
   CCard,
@@ -9,10 +9,14 @@ import {
   CFormInput,
   CInputGroup,
   CInputGroupText,
+  CNavItem,
+  CNavLink,
   CRow,
-} from '@coreui/react'
-import CIcon from '@coreui/icons-react'
-import { cilLockLocked, cilUser } from '@coreui/icons'
+} from "@coreui/react";
+import CIcon from "@coreui/icons-react";
+import { cilLockLocked, cilUser } from "@coreui/icons";
+import Dashboard from "../../dashboard/Dashboard";
+import { NavLink } from "react-router-dom";
 
 const Register = () => {
   return (
@@ -29,7 +33,10 @@ const Register = () => {
                     <CInputGroupText>
                       <CIcon icon={cilUser} />
                     </CInputGroupText>
-                    <CFormInput placeholder="Username" autoComplete="username" />
+                    <CFormInput
+                      placeholder="Username"
+                      autoComplete="username"
+                    />
                   </CInputGroup>
                   <CInputGroup className="mb-3">
                     <CInputGroupText>@</CInputGroupText>
@@ -56,7 +63,11 @@ const Register = () => {
                     />
                   </CInputGroup>
                   <div className="d-grid">
-                    <CButton color="success">Create Account</CButton>
+                    <CNavItem>
+                      <CNavLink to="/dashboard" component={NavLink}>
+                        <CButton color="success">Create Account</CButton>
+                      </CNavLink>
+                    </CNavItem>
                   </div>
                 </CForm>
               </CCardBody>
@@ -65,7 +76,7 @@ const Register = () => {
         </CRow>
       </CContainer>
     </div>
-  )
-}
+  );
+};
 
-export default Register
+export default Register;
