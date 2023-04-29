@@ -305,11 +305,6 @@ const _nav = [
     items: [
       {
         component: CNavItem,
-        name: 'Packages',
-        to: '/package',
-      },
-      {
-        component: CNavItem,
         name: 'AddPackage',
         to: '/package/add-package',
       },

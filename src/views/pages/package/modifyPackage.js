@@ -1,29 +1,9 @@
 import React from 'react'
-// import {
-//   CButton,
-//   CDropdown,
-//   CDropdownDivider,
-//   CDropdownItem,
-//   CDropdownMenu,
-//   CDropdownToggle,
-//   CButtonGroup,
-//   CButtonToolbar,
-//   CCard,
-//   CCardBody,
-//   CCardHeader,
-//   CCol,
-//   CFormCheck,
-//   CFormInput,
-//   CInputGroup,
-//   CInputGroupText,
-//   CRow,
-// } from '@coreui/react'
-// import { DocsExample } from 'src/components'
 
 const modifyPackage = () => {
   return (
     <p>
-        Lorem ipsum Dolor Sit Amen. Pray you shitty Omen.
+        Minim nostrud sunt ullamco non amet officia incididunt elit. Laboris laboris consequat incididunt aliqua irure minim tempor exercitation est aliquip. Non tempor ullamco proident est consectetur ut dolore laboris. Commodo est non veniam enim ullamco laborum nulla velit ut et sint.
     </p>
   )
 }

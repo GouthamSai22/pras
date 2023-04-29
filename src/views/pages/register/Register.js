@@ -14,8 +14,7 @@ import {
   CRow,
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
-import { cilLockLocked, cilUser } from "@coreui/icons";
-import Dashboard from "../../dashboard/Dashboard";
+import { cilRoom, cilPhone } from "@coreui/icons";
 import { NavLink } from "react-router-dom";
 
 const Register = () => {
@@ -31,42 +30,29 @@ const Register = () => {
                   <p className="text-medium-emphasis">Create your account</p>
                   <CInputGroup className="mb-3">
                     <CInputGroupText>
-                      <CIcon icon={cilUser} />
+                      <CIcon icon={cilPhone} />
                     </CInputGroupText>
-                    <CFormInput
-                      placeholder="Username"
-                      autoComplete="username"
-                    />
+                    <CFormInput placeholder="Mobile Number" type="tel" />
+                  </CInputGroup>
+                  <CInputGroup className="mb-3">
+                    <CInputGroupText>
+                      <CIcon icon={cilRoom} />
+                    </CInputGroupText>
+                    <CFormInput placeholder="Room Number" />
                   </CInputGroup>
                   <CInputGroup className="mb-3">
                     <CInputGroupText>@</CInputGroupText>
                     <CFormInput placeholder="Email" autoComplete="email" />
                   </CInputGroup>
-                  <CInputGroup className="mb-3">
-                    <CInputGroupText>
-                      <CIcon icon={cilLockLocked} />
-                    </CInputGroupText>
-                    <CFormInput
-                      type="password"
-                      placeholder="Password"
-                      autoComplete="new-password"
-                    />
-                  </CInputGroup>
-                  <CInputGroup className="mb-4">
-                    <CInputGroupText>
-                      <CIcon icon={cilLockLocked} />
-                    </CInputGroupText>
-                    <CFormInput
-                      type="password"
-                      placeholder="Repeat password"
-                      autoComplete="new-password"
-                    />
-                  </CInputGroup>
                   <div className="d-grid">
                     <CNavItem>
-                      <CNavLink to="/dashboard" component={NavLink}>
-                        <CButton color="success">Create Account</CButton>
-                      </CNavLink>
+                      <CButton
+                        color="success"
+                        to="/dashboard"
+                        component={NavLink}
+                      >
+                        Create Account
+                      </CButton>
                     </CNavItem>
                   </div>
                 </CForm>

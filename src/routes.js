@@ -51,13 +51,19 @@ const Toasts = React.lazy(() => import('./views/notifications/toasts/Toasts'))
 const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
 
 // Packages
-const Packages = React.lazy(() => import('./views/pages/package/packageOptions'))
 const AddPackage = React.lazy(() => import('./views/pages/package/addpackage'))
 const DeletePackage = React.lazy(() => import('./views/pages/package/deletePackage'))
 const ModifyPackage = React.lazy(() => import('./views/pages/package/modifyPackage'))
 
 // Camera
 const Camera = React.lazy(() => import('./views/pages/camera/Camera'))
+
+// Barcode Scanner
+const Barcode = React.lazy(() => import('./views/pages/barcode/Barcode'))
+
+// View Packages
+const Collected = React.lazy(() => import('./views/pages/viewPackage/ViewCollected'))
+const UnCollected = React.lazy(() => import('./views/pages/viewPackage/ViewUnCollected'))
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -104,11 +110,13 @@ const routes = [
   { path: '/notifications/modals', name: 'Modals', element: Modals },
   { path: '/notifications/toasts', name: 'Toasts', element: Toasts },
   { path: '/widgets', name: 'Widgets', element: Widgets },
-  { path: '/package', name: 'Packages', element: Packages },
   { path: '/package/add-package', name: 'AddPackage', element: AddPackage },
   { path: '/package/delete-package', name: 'DeletePackage', element: DeletePackage },
   { path: '/package/modify-package', name: 'ModifyPackage', element: ModifyPackage },
   { path: '/camera', name: 'Camera', element: Camera },
+  { path: '/barcode', name: 'Barcode', element: Barcode },
+  { path: '/view-packages/collected', name: 'Collected', element: Collected },
+  { path: '/view-packages/uncollected', name: 'UnCollected', element: UnCollected },
 ]
 
 export default routes

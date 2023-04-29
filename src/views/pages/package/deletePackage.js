@@ -1,29 +1,9 @@
 import React from 'react'
-// import {
-//   CButton,
-//   CDropdown,
-//   CDropdownDivider,
-//   CDropdownItem,
-//   CDropdownMenu,
-//   CDropdownToggle,
-//   CButtonGroup,
-//   CButtonToolbar,
-//   CCard,
-//   CCardBody,
-//   CCardHeader,
-//   CCol,
-//   CFormCheck,
-//   CFormInput,
-//   CInputGroup,
-//   CInputGroupText,
-//   CRow,
-// } from '@coreui/react'
-// import { DocsExample } from 'src/components'
 
 const deletePackage = () => {
   return (
     <p>
-        Lorem ipsum Dolor Sit Amen. Pray you shitty Omen.
+        Officia excepteur minim ea velit culpa aute consequat veniam mollit eiusmod. Cillum pariatur laborum elit id. Eiusmod irure anim consequat quis esse duis. Pariatur non laboris eiusmod dolor aliqua sint velit elit aliqua ad est anim. Anim proident magna non anim Lorem irure ullamco dolore nisi. Ut dolore id laborum consectetur aliqua sit nostrud dolore mollit. Officia adipisicing laboris labore excepteur commodo duis aliqua mollit est elit deserunt duis velit excepteur.
     </p>
   )
 }

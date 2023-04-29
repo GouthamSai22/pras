@@ -1,6 +1,6 @@
-import React from 'react'
-import { NavLink } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
+import React from "react";
+import { NavLink } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import {
   CContainer,
   CHeader,
@@ -10,24 +10,28 @@ import {
   CHeaderToggler,
   CNavLink,
   CNavItem,
-} from '@coreui/react'
-import CIcon from '@coreui/icons-react'
-import { cilBell, cilEnvelopeOpen, cilList, cilMenu } from '@coreui/icons'
+  CDropdown,
+  CDropdownToggle,
+  CDropdownMenu,
+  CDropdownItem,
+} from "@coreui/react";
+import CIcon from "@coreui/icons-react";
+import { cilBell, cilEnvelopeOpen, cilList, cilMenu } from "@coreui/icons";
 
-import { AppBreadcrumb } from './index'
-import { AppHeaderDropdown } from './header/index'
-import { logo } from 'src/assets/brand/logo'
+import { AppBreadcrumb } from "./index";
+import { AppHeaderDropdown } from "./header/index";
+import { logo } from "src/assets/brand/logo";
 
 const AppHeader = () => {
-  const dispatch = useDispatch()
-  const sidebarShow = useSelector((state) => state.sidebarShow)
+  const dispatch = useDispatch();
+  const sidebarShow = useSelector((state) => state.sidebarShow);
 
   return (
     <CHeader position="sticky" className="mb-4">
       <CContainer fluid>
         <CHeaderToggler
           className="ps-1"
-          onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
+          onClick={() => dispatch({ type: "set", sidebarShow: !sidebarShow })}
         >
           <CIcon icon={cilMenu} size="lg" />
         </CHeaderToggler>
@@ -41,10 +45,55 @@ const AppHeader = () => {
             </CNavLink>
           </CNavItem>
           <CNavItem>
-            <CNavLink to="/package" component={NavLink}>Package</CNavLink>
+            <CDropdown variant="nav-item">
+              <CDropdownToggle placement="bottom-end">Package</CDropdownToggle>
+              <CDropdownMenu>
+                <CDropdownItem>
+                  <CNavLink to="/package/add-package" component={NavLink}>
+                    Add Package
+                  </CNavLink>
+                </CDropdownItem>
+                <CDropdownItem>
+                  <CNavLink to="/package/delete-package" component={NavLink}>
+                    Delete Package
+                  </CNavLink>
+                </CDropdownItem>
+                <CDropdownItem>
+                  <CNavLink to="/package/modify-package" component={NavLink}>
+                    Modify Package
+                  </CNavLink>
+                </CDropdownItem>
+              </CDropdownMenu>
+            </CDropdown>
           </CNavItem>
           <CNavItem>
-            <CNavLink to="/camera" component={NavLink}>Camera</CNavLink>
+            <CDropdown variant="nav-item">
+              <CDropdownToggle placement="bottom-end">
+                View Packages
+              </CDropdownToggle>
+              <CDropdownMenu>
+                <CDropdownItem>
+                  <CNavLink to="/view-packages/collected" component={NavLink}>
+                    View Collected Packages
+                  </CNavLink>
+                </CDropdownItem>
+                <CDropdownItem>
+                  <CNavLink to="/view-packages/uncollected" component={NavLink}>
+                    View UnCollected Packages
+                  </CNavLink>
+                </CDropdownItem>
+              </CDropdownMenu>
+            </CDropdown>
+          </CNavItem>
+          <CNavItem>
+            <CNavLink to="/camera" component={NavLink}>
+              Camera
+            </CNavLink>
+          </CNavItem>
+          <CNavItem>
+            <CNavLink to="/barcode" component={NavLink}>
+              Collect Package
+            </CNavLink>
           </CNavItem>
           <CNavItem>
             <CNavLink href="#">Settings</CNavLink>
@@ -76,7 +125,7 @@ const AppHeader = () => {
         <AppBreadcrumb />
       </CContainer>
     </CHeader>
-  )
-}
+  );
+};
 
-export default AppHeader
+export default AppHeader;
