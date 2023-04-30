@@ -1,3 +1,4 @@
+import { CButton, CContainer, CCol, CRow } from "@coreui/react";
 import React, { useState, useEffect } from "react";
 import Webcam from "react-webcam";
 const WebcamComponent = () => <Webcam />;
@@ -21,13 +22,14 @@ const Camera = () => {
     console.log(typeof picture);
   });
   return (
-    <div>
+    <CContainer fluid>
       <h2 className="mb-5 text-center">
         React Photo Capture using Webcam Examle
       </h2>
-      <div>
-        {picture == "" ? (
-          <center>
+
+      {picture == "" ? (
+        <CContainer fluid>
+          <CRow>
             <Webcam
               audio={false}
               height={400}
@@ -36,41 +38,49 @@ const Camera = () => {
               screenshotFormat="image/jpeg"
               videoConstraints={videoConstraints}
             />
-          </center>
-        ) : (
-          <center>
-            <img src={picture} />
-          </center>
-        )}
-      </div>
-      <div>
-        {picture != "" ? (
-          <center>
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                setPicture();
-              }}
-              className="btn btn-primary"
-            >
-              Retake
-            </button>
-          </center>
-        ) : (
-          <center>
-            <button
+          </CRow>
+          <CRow>
+            <CButton
               onClick={(e) => {
                 e.preventDefault();
                 capture();
               }}
-              className="btn btn-danger"
+              color="danger"
+              size="sm"
             >
               Capture
-            </button>
-          </center>
-        )}
-      </div>
-    </div>
+            </CButton>
+          </CRow>
+        </CContainer>
+      ) : (
+        <CContainer fluid >
+          <CRow>
+            <img src={picture} />
+          </CRow>
+          <CRow>
+            <CButton
+              onClick={(e) => {
+                e.preventDefault();
+                setPicture("");
+              }}
+              color="primary"
+            >
+              Retake
+            </CButton>
+          </CRow>
+          <CRow>
+            <CButton
+              onClick={() => {
+                console.log("Successfully taken photo!");
+              }}
+              color="primary"
+            >
+              Proceed
+            </CButton>
+          </CRow>
+        </CContainer>
+      )}
+    </CContainer>
   );
 };
 export default Camera;

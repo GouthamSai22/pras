@@ -268,33 +268,6 @@ const _nav = [
     name: 'Extras',
   },
   {
-    component: CNavGroup,
-    name: 'Pages',
-    icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
-    items: [
-      {
-        component: CNavItem,
-        name: 'Login',
-        to: '/login',
-      },
-      {
-        component: CNavItem,
-        name: 'Register',
-        to: '/register',
-      },
-      {
-        component: CNavItem,
-        name: 'Error 404',
-        to: '/404',
-      },
-      {
-        component: CNavItem,
-        name: 'Error 500',
-        to: '/500',
-      },
-    ],
-  },
-  {
     component: CNavTitle,
     name: 'Package',
   },
@@ -305,18 +278,23 @@ const _nav = [
     items: [
       {
         component: CNavItem,
-        name: 'AddPackage',
+        name: 'Add Package',
         to: '/package/add-package',
       },
       {
         component: CNavItem,
-        name: 'DeletePackage',
+        name: 'Delete Package',
         to: '/package/delete-package',
       },
       {
         component: CNavItem,
-        name: 'ModifyPackage',
+        name: 'Modify Package',
         to: '/package/modify-package',
+      },
+      {
+        component: CNavItem,
+        name: 'Search Package',
+        to: '/package/search-package',
       },
     ],
   },

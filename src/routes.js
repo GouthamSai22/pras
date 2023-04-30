@@ -54,6 +54,7 @@ const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
 const AddPackage = React.lazy(() => import('./views/pages/package/addpackage'))
 const DeletePackage = React.lazy(() => import('./views/pages/package/deletePackage'))
 const ModifyPackage = React.lazy(() => import('./views/pages/package/modifyPackage'))
+const SearchPackage = React.lazy(() => import('./views/pages/package/searchPackage'))
 
 // Camera
 const Camera = React.lazy(() => import('./views/pages/camera/Camera'))
@@ -113,6 +114,7 @@ const routes = [
   { path: '/package/add-package', name: 'AddPackage', element: AddPackage },
   { path: '/package/delete-package', name: 'DeletePackage', element: DeletePackage },
   { path: '/package/modify-package', name: 'ModifyPackage', element: ModifyPackage },
+  { path: '/package/search-package', name: 'SearchPackage', element: SearchPackage },
   { path: '/camera', name: 'Camera', element: Camera },
   { path: '/barcode', name: 'Barcode', element: Barcode },
   { path: '/view-packages/collected', name: 'Collected', element: Collected },

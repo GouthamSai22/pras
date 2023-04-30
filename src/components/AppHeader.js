@@ -63,6 +63,11 @@ const AppHeader = () => {
                     Modify Package
                   </CNavLink>
                 </CDropdownItem>
+                <CDropdownItem>
+                  <CNavLink to="/package/search-package" component={NavLink}>
+                    Search Package
+                  </CNavLink>
+                </CDropdownItem>
               </CDropdownMenu>
             </CDropdown>
           </CNavItem>
