@@ -55,6 +55,7 @@ const AddPackage = React.lazy(() => import('./views/pages/package/addpackage'))
 const DeletePackage = React.lazy(() => import('./views/pages/package/deletePackage'))
 const ModifyPackage = React.lazy(() => import('./views/pages/package/modifyPackage'))
 const SearchPackage = React.lazy(() => import('./views/pages/package/searchPackage'))
+const VerifyPackage = React.lazy(() => import('./views/pages/package/verifyPackage'))
 
 // Camera
 const Camera = React.lazy(() => import('./views/pages/camera/Camera'))
@@ -65,6 +66,7 @@ const Barcode = React.lazy(() => import('./views/pages/barcode/Barcode'))
 // View Packages
 const Collected = React.lazy(() => import('./views/pages/viewPackage/ViewCollected'))
 const UnCollected = React.lazy(() => import('./views/pages/viewPackage/ViewUnCollected'))
+const AllPackages = React.lazy(() => import('./views/pages/viewPackage/ViewAll'))
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -115,10 +117,12 @@ const routes = [
   { path: '/package/delete-package', name: 'DeletePackage', element: DeletePackage },
   { path: '/package/modify-package', name: 'ModifyPackage', element: ModifyPackage },
   { path: '/package/search-package', name: 'SearchPackage', element: SearchPackage },
+  { path: '/package/verify-package', name: 'VerifyPackage', element: VerifyPackage },
   { path: '/camera', name: 'Camera', element: Camera },
   { path: '/barcode', name: 'Barcode', element: Barcode },
   { path: '/view-packages/collected', name: 'Collected', element: Collected },
   { path: '/view-packages/uncollected', name: 'UnCollected', element: UnCollected },
+  { path: '/view-packages/all', name: 'AllPackages', element: AllPackages },
 ]
 
 export default routes

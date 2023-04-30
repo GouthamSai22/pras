@@ -53,30 +53,41 @@ const Camera = () => {
           </CRow>
         </CContainer>
       ) : (
-        <CContainer fluid >
+        <CContainer fluid>
+          <center>
+            <img src={picture} height="50%" width="50%" />
+          </center>
           <CRow>
-            <img src={picture} />
-          </CRow>
-          <CRow>
-            <CButton
-              onClick={(e) => {
-                e.preventDefault();
-                setPicture("");
-              }}
-              color="primary"
-            >
-              Retake
-            </CButton>
-          </CRow>
-          <CRow>
-            <CButton
-              onClick={() => {
-                console.log("Successfully taken photo!");
-              }}
-              color="primary"
-            >
-              Proceed
-            </CButton>
+            <CCol>
+              <CButton
+                onClick={(e) => {
+                  e.preventDefault();
+                  setPicture("");
+                }}
+                color="primary"
+              >
+                Retake
+              </CButton>
+            </CCol>
+            <CCol>
+              <CButton
+                onClick={() => {
+                  console.log("Successfully taken photo!");
+                  // ********************** Have to change the route later *********************************
+                  fetch("http://localhost:8000/auth", {
+                    method: 'POST',
+                    headers: {
+                      Authorization: credentialResponse.credential,
+                      'Content-Type': 'application/json'
+                    },
+                    body : localStorage.getItem("capturedImage")
+                  });
+                }}
+                color="primary"
+              >
+                Proceed
+              </CButton>
+            </CCol>
           </CRow>
         </CContainer>
       )}
