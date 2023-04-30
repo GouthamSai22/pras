@@ -24,6 +24,7 @@ import pytesseract
 from PIL import Image
 from pyzbar import pyzbar
 import nltk
+from enum import Enum
 
 # Timezone
 IST = pytz.timezone('Asia/Kolkata')
@@ -107,24 +108,28 @@ class DBCollectedPackage(Base):
     collected_by_email = Column(String(255), ForeignKey("user.email"), nullable=False, index=True)
     collection_time = Column(DateTime, default=datetime.now(IST), nullable=False)
 
+class UserRole(str, Enum):
+    ADMIN = "admin"
+    STUDENT = "student"
+
 # Pydantic Models
 class User(BaseModel):
-    _instance = None
+    # _instance = None
 
     user_id: int
     email: EmailStr
     name: str
     phone_number: Optional[str]
     room: Optional[str]
-    role: str
+    role: UserRole
 
     class Config:
         orm_mode = True
 
-    def __new__(cls, *args, **kwargs):
-        if cls._instance is None:
-            cls._instance = super(User, cls).__new__(cls)
-        return cls._instance
+    # def __new__(cls, *args, **kwargs):
+    #     if cls._instance is None:
+    #         cls._instance = super(User, cls).__new__(cls, *args, **kwargs)
+    #     return cls._instance
 
     @classmethod
     def get_by_email(cls, db: Session, email: str) -> Optional["User"]:
@@ -132,6 +137,31 @@ class User(BaseModel):
         if user:
             return User.from_orm(user)
         return None
+
+class Student(User):
+    @classmethod
+    def create(cls, user: User):
+        if user.role == UserRole.STUDENT:
+            return cls(**user.dict())
+        raise ValueError("Invalid user role for creating a student.")
+
+class Admin(User):
+    @classmethod
+    def create(cls, user: User):
+        if user.role == UserRole.ADMIN:
+            return cls(**user.dict())
+        raise ValueError("Invalid user role for creating an admin.")
+     
+
+class UserFactory:
+    @staticmethod
+    def create_user(user: User):
+        if user.role == UserRole.ADMIN:
+            return Admin.create(user)
+        elif user.role == UserRole.STUDENT:
+            return Student.create(user)
+        else:
+            raise ValueError("Invalid user role for creating a user.")
 
 
 class Package(BaseModel):
@@ -159,6 +189,17 @@ class Package(BaseModel):
                 return Package(**package_dict)
             return Package.from_orm(package)
         return None
+
+class Package_Manager:
+    def __init__(self):
+        self.current_user = None
+        self.current_package = None
+    
+    def set_current_user(self, user: User):
+        self.current_user = user
+    
+    def set_current_package(self, package: Package):
+        self.current_package = package
 
 app = FastAPI()
 
