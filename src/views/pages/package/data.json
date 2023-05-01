@@ -1,47 +1,56 @@
 [
     {
-        "id": 1,
-        "name": "Akshit",
-        "city": "Moradabad"
+        "pkg_num": 1,
+        "owner": "Akshit",
+        "city": "Moradabad",
+        "type": "Amazon"
     },
     {
-        "id": 2,
-        "name": "Nikita",
-        "city": "Lucknow"
+        "pkg_num": 2,
+        "owner": "Nikita",
+        "city": "Lucknow",
+        "type": "Amazon"
     },
     {
-        "id": 3,
-        "name": "Deeksha",
-        "city": "Noida"
+        "pkg_num": 3,
+        "owner": "Deeksha",
+        "city": "Nopkg_numa",
+        "type": "Amazon"
     },
     {
-        "id": 4,
-        "name": "Ritesh",
-        "city": "Delhi"
+        "pkg_num": 4,
+        "owner": "Ritesh",
+        "city": "Delhi",
+        "type": "Amazon"
     },
     {
-        "id": 5,
-        "name": "Somya",
-        "city": "Gurugram"
+        "pkg_num": 5,
+        "owner": "Somya",
+        "city": "Gurugram",
+        "type": "Amazon"
     },
     {
-        "id": 6,
-        "name": "Eshika",
-        "city": "Mumbai"
+        "pkg_num": 6,
+        "owner": "Eshika",
+        "city": "Mumbai",
+        "type": "Amazon"
     },
     {
-        "id": 7,
-        "name": "Kalpana",
-        "city": "Rampur"
+        "pkg_num": 7,
+        "owner": "Kalpana",
+        "city": "Rampur",
+        "type": "Amazon"
     },
     {
-        "id": 8,
-        "name": "Parul",
-        "city": "Chandigarh"
+        "pkg_num": 8,
+        "owner": "Parul",
+        "city": "Chandigarh",
+        "type": "Amazon"
     },
     {
-        "id": 9,
-        "name": "Himani",
-        "city": "Dehradun"
+        "pkg_num": 9,
+        "owner": "Himani",
+        "city": "Dehradun",
+        "type": "Amazon"
     }
 ]

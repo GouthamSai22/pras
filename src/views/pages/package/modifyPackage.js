@@ -1,9 +1,9 @@
 import { CTable, CTableDataCell, CTableHeaderCell, CTableHead, CTableRow, CTableBody } from "@coreui/react";
 import React from "react";
-import JsonData from "./data.json";
+import JsonFile from "./data.json";
 
-function JsonDataDisplay() {
-  const DisplayData = JsonData.map((info) => {
+function JsonDataDisplay(props) {
+  const DisplayData = props.jsonFile.map((info) => {
     return (
       <CTableRow>
         <CTableDataCell>{info.id}</CTableDataCell>
@@ -28,7 +28,7 @@ function JsonDataDisplay() {
 }
 
 const modifyPackage = () => {
-  return <JsonDataDisplay />;
+  return <JsonDataDisplay jsonFile={JsonFile}/>;
 };
 
 export default modifyPackage;
