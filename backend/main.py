@@ -194,7 +194,7 @@ class User(BaseModel):
         elif package.get_status() == 2:
             print("collected")
     
-    def search_uncollected_packages(self, db: Session, filter_by: Dict[str, Union[str, datetime]] = {}):
+    def search_uncollected_packages(self, db: Session, filter_by: Dict[str, Optional[Union[str, datetime]]] = {}):
         filters = {
             "package_number": PackageNumberFilter(),
             "owner_name": OwnerNameFilter(),
@@ -202,6 +202,17 @@ class User(BaseModel):
             "arrival": ArrivalFilter(),
         }
         query = db.query(DBPackage).filter(DBPackage.status == 1)
+        for key, value in filter_by.items():
+            if value is None:
+                continue
+
+            if key == "arrival":
+                from_date, to_date = value
+                query = filters[key].apply_filter(query, None, from_date, to_date)
+            else:
+                query = filters[key].apply_filter(query, value, None, None)
+        
+        return query.all()
         
 class Student(User):
     @classmethod
