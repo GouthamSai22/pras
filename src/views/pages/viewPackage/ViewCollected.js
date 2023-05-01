@@ -1,16 +1,38 @@
 import React from "react";
+import "./viewCollected.css"; // import your custom styles
 
-const viewCollected = () => {
+function viewCollected({ }) {
+  const packages = [
+    { id: 1, pickupDate: '2022-05-01', parcelType: 'Box', postDetails: 'Sent by John' },
+    { id: 2, pickupDate: '2022-05-02', parcelType: 'Envelope', postDetails: 'Sent by Mary' },
+    { id: 3, pickupDate: '2022-05-03', parcelType: 'Package', postDetails: 'Sent by Bob' },
+  ];
+
   return (
-    <p>
-      Ut quis eu excepteur eu sunt esse esse enim cupidatat pariatur dolor.
-      Adipisicing ut nulla fugiat dolore. Eu cupidatat id sunt ad exercitation
-      eiusmod ipsum consectetur ut reprehenderit. Reprehenderit cupidatat sunt
-      voluptate non labore consequat est. Ex dolore enim ex occaecat nisi esse
-      in est incididunt. Voluptate ullamco consequat minim exercitation proident
-      sit officia sit cillum.
-    </p>
+    <div className="package-table">
+      <h1>Collected Package Table</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>S.No</th>
+            <th>Date of Pickup</th>
+            <th>Type of Parcel</th>
+            <th>Post Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          {packages.map((pkg, index) => (
+            <tr key={pkg.id}>
+              <td>{index + 1}</td>
+              <td>{pkg.pickupDate}</td>
+              <td>{pkg.parcelType}</td>
+              <td>{pkg.postDetails}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
-};
+}
 
 export default viewCollected;
