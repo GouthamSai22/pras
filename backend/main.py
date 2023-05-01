@@ -25,7 +25,6 @@ from PIL import Image
 from pyzbar import pyzbar
 import nltk
 from enum import Enum
-from abc import ABC, abstractmethod
 
 # Timezone
 IST = pytz.timezone('Asia/Kolkata')
@@ -138,6 +137,12 @@ class User(BaseModel):
         if user:
             return User.from_orm(user)
         return None
+    
+    def notify(self, package: "Package"):
+        if package.get_status() == 1:
+            print("arrived")
+        elif package.get_status() == 2:
+            print("collected")
 
 class Student(User):
     @classmethod
@@ -164,24 +169,6 @@ class UserFactory:
         else:
             raise ValueError("Invalid user role for creating a user.")
 
-class Observer(ABC):
-    @abstractmethod
-    def update(self, package: "Package") -> None:
-        pass
-
-class Subject(ABC):
-    def __init__(self):
-        self._observers: List[Observer] = []
-    
-    def attach(self, observer: Observer) -> None:
-        self._observers.append(observer)
-    
-    def detach(self, observer: Observer) -> None:
-        self._observers.remove(observer)
-    
-    def notify(self, package: "Package") -> None:
-        for observer in self._observers:
-            observer.update(package)
 
 class Package(BaseModel):
     package_id: int
@@ -192,6 +179,8 @@ class Package(BaseModel):
     arrival: datetime
     collection_time: Optional[datetime]
     collected_by_email: Optional[str]
+
+    observer: Optional[User] = None
 
     class Config:
         orm_mode = True
@@ -208,22 +197,19 @@ class Package(BaseModel):
                 return Package(**package_dict)
             return Package.from_orm(package)
         return None
+    
+    def set_observer(self, observer: User) -> None:
+        self.observer = observer
+    
+    def get_status(self):
+        return self.status
 
     def set_status(self, status: int) -> None:
+        previous_status = self.status
         self.status = status
-        self.notify(self)
-
-class EmailNotifier(Observer):
-    def __init__(self, email: str):
-        self.email = email
-    
-    def update(self, package: "Package") -> None:
-        if package.status == 0:
-            print("expected")
-        elif package.status == 1:
-            print("arrived")
-        elif package.status == 2:
-            print("collected")
+        if previous_status != status:
+            if self.observer:
+                self.observer.notify(self)
 
 class Package_Manager:
     def __init__(self):
@@ -235,8 +221,6 @@ class Package_Manager:
     
     def set_current_package(self, package: Package):
         self.current_package = package
-        self.email_notifier = EmailNotifier(self.current_user.email)
-        self.current_package.attach(self.email_notifier)
 
 app = FastAPI()
 
