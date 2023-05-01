@@ -26,6 +26,7 @@ from pyzbar import pyzbar
 import nltk
 from enum import Enum
 from abc import ABC, abstractmethod
+import base64
 
 # Timezone
 IST = pytz.timezone('Asia/Kolkata')
@@ -412,6 +413,18 @@ async def get_package(package_id: int, db: Session = Depends(get_db)):
     if package:
         return package
     return {"message": "Package not found"}
+
+@app.post("/camera")
+async def get_details_from_camera(request: Request):
+    body = await request.json()
+    img_str = body["pic"].split(",")[1]
+    img_bytes = base64.b64decode(img_str)
+    with open("image.jpg", "wb") as f:
+        f.write(img_bytes)
+    img = Image.open("image.jpg").convert("L")
+    details = get_details_from_image(img)
+    return details
+
 
 # send_email('Vikhyath', 'AWB1002', 'Goutham', ['cs20btech11056@iith.ac.in', 'cs20btech11042@iith.ac.in', 'cs19btech11051@iith.ac.in', 'es19btech11017@iith.ac.in'])
 # img = Image.open('images/test_image.jpeg').convert('L')
