@@ -182,11 +182,23 @@ const Camera = () => {
                 <CFormInput
                   id="arrivalDate"
                   type="date"
+                  value={new Date().toISOString().slice(0, 10)}
                   onChange={(e) => {
                     setArrivalDate(e.target.value); // update the state variable when the input changes
                   }}
                 />
               </CInputGroup>
+              {/* <CInputGroup>
+                <CInputGroupText>Time of Arrival</CInputGroupText>
+                <CFormInput
+                  id="arrivalDate"
+                  type="time"
+                  value={(new Date().toISOString().slice(11, 19))+330*60*1000}
+                  onChange={(e) => {
+                    setArrivalDate(e.target.value); // update the state variable when the input changes
+                  }}
+                />
+              </CInputGroup> */}
               <CInputGroup>
                 <CInputGroupText>Student Name</CInputGroupText>
                 <CFormInput

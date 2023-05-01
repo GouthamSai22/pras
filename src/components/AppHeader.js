@@ -92,7 +92,7 @@ const AppHeader = () => {
                 </CDropdownItem>
               </CDropdownMenu>
             </CDropdown> */}
-            <CNavLink to="/package/add-package" component={NavLink}>
+            <CNavLink to="/camera" component={NavLink}>
               Add Package
             </CNavLink>
           </CNavItem>
@@ -102,11 +102,11 @@ const AppHeader = () => {
               Camera
             </CNavLink>
           </CNavItem> */}
-          <CNavItem>
+          {/* <CNavItem>
             <CNavLink to="/barcode" component={NavLink}>
               Collect Package
             </CNavLink>
-          </CNavItem>
+          </CNavItem> */}
           <CNavItem>
             <CNavLink href="#">Settings</CNavLink>
           </CNavItem>
