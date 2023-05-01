@@ -268,6 +268,14 @@ class Package(BaseModel):
                 return Package(**package_dict)
             return Package.from_orm(package)
         return None
+
+    @classmethod
+    def add_package(cls, db: Session, details: dict) -> "Package":
+        db_package = DBPackage(**details)
+        db.add(db_package)
+        db.commit()
+        db.refresh(db_package)
+        return cls.from_orm(db_package)
     
     def set_observer(self, observer: User) -> None:
         self.observer = observer
@@ -348,6 +356,7 @@ def send_email(name, package_id, collected_by, receiver_list):
 def get_details_from_image(img):
     text = pytesseract.image_to_string(img)
     barcodes = pyzbar.decode(img)
+    barcodeData = ""
     for barcode in barcodes:
         barcodeData = barcode.data.decode("utf-8")
     
@@ -382,6 +391,13 @@ def get_details_from_image(img):
     
     return {"package_number": barcodeData, "owner_name": full_name}
 
+def get_roll_number_from_image(img):
+    barcodes = pyzbar.decode(img)
+    barcodeData = ""
+    for barcode in barcodes:
+        barcodeData = barcode.data.decode("utf-8")
+    return {"roll_number": barcodeData}
+
 @app.get("/")
 async def root():
     try:
@@ -394,17 +410,26 @@ async def root():
     return {"message": "Hello World"}
 
 @app.get("/auth")
-async def auth(details: dict = Depends(verify_auth_token)):
+async def auth(details: dict = Depends(verify_auth_token), db: Session = Depends(get_db)):
     """
     Test Endpoint to validate user identity
     """
+    email = details["email"]
+    user = User.get_by_email(db, email)
+    if user:
+        user_object = UserFactory.create_user(user)
+        if user_object.role == "admin":
+            details["role"] = "admin"
+        elif user_object.role == "student":
+            details["role"] = "student"
     return details
 
 @app.get("/users/{email}")
 async def get_user(email: str, db: Session = Depends(get_db)):
     user = User.get_by_email(db, email)
     if user:
-        return user
+        user_object = UserFactory.create_user(user)
+        return user_object
     return {"message": "User not found"}
 
 @app.get("/packages/{package_id}")
@@ -424,6 +449,39 @@ async def get_details_from_camera(request: Request):
     img = Image.open("image.jpg").convert("L")
     details = get_details_from_image(img)
     return details
+
+@app.post("/roll-number")
+async def get_roll_number_from_camera(request: Request):
+    body = await request.json()
+    img_str = body["pic"].split(",")[1]
+    img_bytes = base64.b64decode(img_str)
+    with open("roll.jpg", "wb") as f:
+        f.write(img_bytes)
+    img = Image.open("roll.jpg").convert("L")
+    roll = get_roll_number_from_image(img)
+    return roll
+
+@app.get("/packages")
+async def get_packages(db: Session = Depends(get_db)):
+    packages = db.query(DBPackage).all()
+    result = []
+    for package in packages:
+        package_dict = package.__dict__
+        collected_package = db.query(DBCollectedPackage).filter(DBCollectedPackage.collected_package_id == package.package_id).first()
+        if collected_package:
+            package_dict["collected_by_email"] = collected_package.collected_by_email
+            package_dict["collection_time"] = collected_package.collection_time
+        else:
+            package_dict["collected_by_email"] = None
+            package_dict["collection_time"] = None
+        package = Package(**package_dict)
+        result.append(package)
+    return result
+
+@app.post("/add-package")
+async def add_package(request: Request, db: Session = Depends(get_db)):
+    body = await request.json()
+    package = Package.add_package(db, body)
 
 
 # send_email('Vikhyath', 'AWB1002', 'Goutham', ['cs20btech11056@iith.ac.in', 'cs20btech11042@iith.ac.in', 'cs19btech11051@iith.ac.in', 'es19btech11017@iith.ac.in'])
