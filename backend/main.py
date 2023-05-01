@@ -383,6 +383,13 @@ def get_details_from_image(img):
     
     return {"package_number": barcodeData, "owner_name": full_name}
 
+def get_roll_number_from_image(img):
+    barcodes = pyzbar.decode(img)
+    barcodeData = ""
+    for barcode in barcodes:
+        barcodeData = barcode.data.decode("utf-8")
+    return {"roll_number": barcodeData}
+
 @app.get("/")
 async def root():
     try:
@@ -426,6 +433,16 @@ async def get_details_from_camera(request: Request):
     details = get_details_from_image(img)
     return details
 
+@app.post("/roll-number")
+async def get_roll_number_from_camera(request: Request):
+    body = await request.json()
+    img_str = body["pic"].split(",")[1]
+    img_bytes = base64.b64decode(img_str)
+    with open("roll.jpg", "wb") as f:
+        f.write(img_bytes)
+    img = Image.open("roll.jpg").convert("L")
+    roll = get_roll_number_from_image(img)
+    return roll
 
 # send_email('Vikhyath', 'AWB1002', 'Goutham', ['cs20btech11056@iith.ac.in', 'cs20btech11042@iith.ac.in', 'cs19btech11051@iith.ac.in', 'es19btech11017@iith.ac.in'])
 # img = Image.open('images/test_image.jpeg').convert('L')
