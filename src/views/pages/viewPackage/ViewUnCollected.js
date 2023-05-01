@@ -1,11 +1,24 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./viewCollected.css"; // import your custom styles
 import CIcon from "@coreui/icons-react";
 import { cilBarcode, cilPencil, cilTrash } from "@coreui/icons";
-import { CButton } from "@coreui/react";
-import { CTooltip } from "@coreui/react";
+import {
+  CButton,
+  CTooltip,
+  CModal,
+  CModalBody,
+  CModalFooter,
+  CModalHeader,
+  CModalTitle,
+  CAlert,
+} from "@coreui/react";
 
 function viewUnCollected({}) {
+  const [collectVisible, setCollectVisible] = useState(false);
+
+  const [deleteVisible, setDeleteVisible] = useState(false);
+  const [delAlertVisible, setDelAlertVisible] = useState(false);
+
   const packages = [
     {
       id: 1,
@@ -29,7 +42,7 @@ function viewUnCollected({}) {
 
   return (
     <div className="package-table">
-      <h1>Collected Package Table</h1>
+      <h1>Uncollected Package Table</h1>
       <table>
         <thead>
           <tr>
@@ -51,23 +64,75 @@ function viewUnCollected({}) {
               <td>{pkg.postDetails}</td>
               <td>
                 <CTooltip content="Collect" placement="bottom">
-                <CButton color="light">
-                  <CIcon icon={cilBarcode}></CIcon>
-                </CButton>
+                  <CButton color="light" onClick={() => setCollectVisible(!collectVisible)}>
+                    <CIcon icon={cilBarcode}></CIcon>
+                    <CModal
+                      alignment="center"
+                      scrollable
+                      visible={collectVisible}
+                      onClose={() => setCollectVisible(false)}
+                    >
+                      <CModalHeader>
+                        <CModalTitle>ID Card Scanner</CModalTitle>
+                      </CModalHeader>
+                      <CModalBody>
+                        <p>Scan ID</p>
+                      </CModalBody>
+                      <CModalFooter>
+                        <CButton
+                          color="secondary"
+                          onClick={() => setCollectVisible(false)}
+                        >
+                          Cancel
+                        </CButton>
+
+                        <CButton color="primary" onClick={() => setCollectVisible(false)}>Save</CButton>
+                      
+                      </CModalFooter>
+                    </CModal>
+                  </CButton>
                 </CTooltip>
               </td>
               <td>
                 <CTooltip content="Edit" placement="bottom">
-                <CButton color="light">
-                  <CIcon icon={cilPencil}></CIcon>
-                </CButton>
+                  <CButton color="light">
+                    <CIcon icon={cilPencil}></CIcon>
+                  </CButton>
                 </CTooltip>
               </td>
               <td>
                 <CTooltip content="Delete" placement="bottom">
-                <CButton color="light">
-                  <CIcon icon={cilTrash}></CIcon>
-                </CButton>
+                  <CButton
+                    color="light"
+                    onClick={() => setDeleteVisible(!deleteVisible)}
+                  >
+                    <CIcon icon={cilTrash}></CIcon>
+                    <CModal
+                      alignment="center"
+                      scrollable
+                      visible={deleteVisible}
+                      onClose={() => setDeleteVisible(false)}
+                    >
+                      <CModalHeader>
+                        <CModalTitle>Delete Entry</CModalTitle>
+                      </CModalHeader>
+                      <CModalBody>
+                        <p>Are you sure you want to delete this entry?</p>
+                      </CModalBody>
+                      <CModalFooter>
+                        <CButton
+                          color="secondary"
+                          onClick={() => setDeleteVisible(false)}
+                        >
+                          Cancel
+                        </CButton>
+
+                        <CButton color="primary" onClick={() => setDeleteVisible(false)}>Delete</CButton>
+
+
+                      </CModalFooter>
+                    </CModal>
+                  </CButton>
                 </CTooltip>
               </td>
             </tr>

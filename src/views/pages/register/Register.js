@@ -47,7 +47,7 @@ const Register = () => {
                     <CNavItem>
                       <CButton
                         color="success"
-                        to="/dashboard"
+                        to="/view-packages/uncollected"
                         component={NavLink}
                       >
                         Create Account

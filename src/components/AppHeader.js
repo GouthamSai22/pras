@@ -39,13 +39,35 @@ const AppHeader = () => {
           <CIcon icon={logo} height={48} alt="Logo" />
         </CHeaderBrand>
         <CHeaderNav className="d-none d-md-flex me-auto">
-          <CNavItem>
+          {/* <CNavItem>
             <CNavLink to="/dashboard" component={NavLink}>
               Dashboard
             </CNavLink>
+          </CNavItem> */}
+          <CNavItem>
+            <CNavLink to="/view-packages/uncollected" component={NavLink}>
+              View Packages
+            </CNavLink>
+            {/* <CDropdown variant="nav-item">
+              <CDropdownToggle placement="bottom-end">
+                View Packages
+              </CDropdownToggle>
+              <CDropdownMenu>
+                <CDropdownItem>
+                  <CNavLink to="/view-packages/collected" component={NavLink}>
+                    View Collected Packages
+                  </CNavLink>
+                </CDropdownItem>
+                <CDropdownItem>
+                  <CNavLink to="/view-packages/uncollected" component={NavLink}>
+                    View UnCollected Packages
+                  </CNavLink>
+                </CDropdownItem>
+              </CDropdownMenu>
+            </CDropdown> */}
           </CNavItem>
           <CNavItem>
-            <CDropdown variant="nav-item">
+            {/* <CDropdown variant="nav-item">
               <CDropdownToggle placement="bottom-end">Package</CDropdownToggle>
               <CDropdownMenu>
                 <CDropdownItem>
@@ -69,37 +91,22 @@ const AppHeader = () => {
                   </CNavLink>
                 </CDropdownItem>
               </CDropdownMenu>
-            </CDropdown>
+            </CDropdown> */}
+            <CNavLink to="/camera" component={NavLink}>
+              Add Package
+            </CNavLink>
           </CNavItem>
-          <CNavItem>
-            <CDropdown variant="nav-item">
-              <CDropdownToggle placement="bottom-end">
-                View Packages
-              </CDropdownToggle>
-              <CDropdownMenu>
-                <CDropdownItem>
-                  <CNavLink to="/view-packages/collected" component={NavLink}>
-                    View Collected Packages
-                  </CNavLink>
-                </CDropdownItem>
-                <CDropdownItem>
-                  <CNavLink to="/view-packages/uncollected" component={NavLink}>
-                    View UnCollected Packages
-                  </CNavLink>
-                </CDropdownItem>
-              </CDropdownMenu>
-            </CDropdown>
-          </CNavItem>
-          <CNavItem>
+
+          {/* <CNavItem>
             <CNavLink to="/camera" component={NavLink}>
               Camera
             </CNavLink>
-          </CNavItem>
-          <CNavItem>
+          </CNavItem> */}
+          {/* <CNavItem>
             <CNavLink to="/barcode" component={NavLink}>
               Collect Package
             </CNavLink>
-          </CNavItem>
+          </CNavItem> */}
           <CNavItem>
             <CNavLink href="#">Settings</CNavLink>
           </CNavItem>
