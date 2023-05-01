@@ -1,0 +1,56 @@
+[
+    {
+        "pkg_num": 1,
+        "owner": "Akshit",
+        "city": "Moradabad",
+        "type": "Amazon"
+    },
+    {
+        "pkg_num": 2,
+        "owner": "Nikita",
+        "city": "Lucknow",
+        "type": "Amazon"
+    },
+    {
+        "pkg_num": 3,
+        "owner": "Deeksha",
+        "city": "Nopkg_numa",
+        "type": "Amazon"
+    },
+    {
+        "pkg_num": 4,
+        "owner": "Ritesh",
+        "city": "Delhi",
+        "type": "Amazon"
+    },
+    {
+        "pkg_num": 5,
+        "owner": "Somya",
+        "city": "Gurugram",
+        "type": "Amazon"
+    },
+    {
+        "pkg_num": 6,
+        "owner": "Eshika",
+        "city": "Mumbai",
+        "type": "Amazon"
+    },
+    {
+        "pkg_num": 7,
+        "owner": "Kalpana",
+        "city": "Rampur",
+        "type": "Amazon"
+    },
+    {
+        "pkg_num": 8,
+        "owner": "Parul",
+        "city": "Chandigarh",
+        "type": "Amazon"
+    },
+    {
+        "pkg_num": 9,
+        "owner": "Himani",
+        "city": "Dehradun",
+        "type": "Amazon"
+    }
+]
