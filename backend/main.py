@@ -7,12 +7,12 @@ import os
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from typing import Union, List, Optional
+from typing import Union, List, Optional, Dict
 from auth import authn_user
 from datetime import datetime
 from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session, sessionmaker, joinedload, relationship
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, and_, or_
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, BigInteger, String, Integer, DateTime, Boolean, ForeignKey
 import pytz
@@ -25,6 +25,7 @@ from PIL import Image
 from pyzbar import pyzbar
 import nltk
 from enum import Enum
+from abc import ABC, abstractmethod
 
 # Timezone
 IST = pytz.timezone('Asia/Kolkata')
@@ -108,6 +109,55 @@ class DBCollectedPackage(Base):
     collected_by_email = Column(String(255), ForeignKey("user.email"), nullable=False, index=True)
     collection_time = Column(DateTime, default=datetime.now(IST), nullable=False)
 
+class FilterStategy(ABC):
+    @abstractmethod
+    def apply_filter(self, query: Session, filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> Session:
+        pass
+
+class PackageNumberFilter(FilterStategy):
+    def apply_filter(self, query: Session, filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> Session:
+        if filter_value:
+            query = query.filter(DBPackage.package_number.contains(filter_value))
+        return query
+    
+class PackageTypeFilter(FilterStategy):
+    def apply_filter(self, query: Session, filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> Session:
+        if filter_value:
+            query = query.filter(DBPackage.package_type == filter_value)
+        return query
+    
+class OwnerNameFilter(FilterStategy):
+    def apply_filter(self, query: Session, filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> Session:
+        if filter_value:
+            query = query.filter(DBPackage.owner_name == filter_value)
+        return query
+
+class ArrivalFilter(FilterStategy):
+    def apply_filter(self, query: Session, filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> Session:
+        if from_date and to_date:
+            query = query.filter(and_(DBPackage.arrival >= from_date, DBPackage.arrival <= to_date))
+        elif from_date:
+            query = query.filter(DBPackage.arrival >= from_date)
+        elif to_date:
+            query = query.filter(DBPackage.arrival <= to_date)
+        return query
+    
+class CollectedByEmailFilter(FilterStategy):
+    def apply_filter(self, query: Session, filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> Session:
+        if filter_value:
+            query = query.join(DBCollectedPackage).filter(DBCollectedPackage.collected_by_email == filter_value)
+        return query
+
+class CollectionTimeFilter(FilterStategy):
+    def apply_filter(self, query: Session, filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> Session:
+        if from_date and to_date:
+            query = query.join(DBCollectedPackage).filter(and_(DBCollectedPackage.collection_time >= from_date, DBCollectedPackage.collection_time <= to_date))
+        elif from_date:
+            query = query.join(DBCollectedPackage).filter(DBCollectedPackage.collection_time >= from_date)
+        elif to_date:
+            query = query.join(DBCollectedPackage).filter(DBCollectedPackage.collection_time <= to_date)
+        return query
+
 class UserRole(str, Enum):
     ADMIN = "admin"
     STUDENT = "student"
@@ -143,7 +193,16 @@ class User(BaseModel):
             print("arrived")
         elif package.get_status() == 2:
             print("collected")
-
+    
+    def search_uncollected_packages(self, db: Session, filter_by: Dict[str, Union[str, datetime]] = {}):
+        filters = {
+            "package_number": PackageNumberFilter(),
+            "owner_name": OwnerNameFilter(),
+            "package_type": PackageTypeFilter(),
+            "arrival": ArrivalFilter(),
+        }
+        query = db.query(DBPackage).filter(DBPackage.status == 1)
+        
 class Student(User):
     @classmethod
     def create(cls, user: User):
