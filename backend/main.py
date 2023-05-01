@@ -268,6 +268,14 @@ class Package(BaseModel):
                 return Package(**package_dict)
             return Package.from_orm(package)
         return None
+
+    @classmethod
+    def add_package(cls, db: Session, details: dict) -> "Package":
+        db_package = DBPackage(**details)
+        db.add(db_package)
+        db.commit()
+        db.refresh(db_package)
+        return cls.from_orm(db_package)
     
     def set_observer(self, observer: User) -> None:
         self.observer = observer
@@ -469,6 +477,12 @@ async def get_packages(db: Session = Depends(get_db)):
         package = Package(**package_dict)
         result.append(package)
     return result
+
+@app.post("/add-package")
+async def add_package(request: Request, db: Session = Depends(get_db)):
+    body = await request.json()
+    package = Package.add_package(db, body)
+
 
 # send_email('Vikhyath', 'AWB1002', 'Goutham', ['cs20btech11056@iith.ac.in', 'cs20btech11042@iith.ac.in', 'cs19btech11051@iith.ac.in', 'es19btech11017@iith.ac.in'])
 # img = Image.open('images/test_image.jpeg').convert('L')
