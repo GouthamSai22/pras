@@ -10,7 +10,7 @@ import {
   CInputGroup,
   CInputGroupText,
   CFormInput,
-  CFormSelect
+  CFormSelect,
 } from "@coreui/react";
 import React, { useState, useEffect } from "react";
 import Webcam from "react-webcam";
@@ -22,13 +22,12 @@ const videoConstraints = {
   height: 400,
   facingMode: "user",
 };
+
 const Camera = () => {
   const [picture, setPicture] = useState("");
 
   useEffect(() => {
     localStorage.setItem("capturedImage", JSON.stringify(picture));
-    const formData = new FormData();
-    formData.append("picture", picture);
   }, [picture]);
 
   const webcamRef = React.useRef(null);
@@ -99,8 +98,8 @@ const Camera = () => {
               </CCol>
               <CCol>
                 <CButton
-                  onClick={() => {
-                    fetch("http://localhost:8000/camera", {
+                  onClick={async () => {
+                    const res = await fetch("http://localhost:8000/camera", {
                       method: "POST",
                       headers: {
                         // Authorization: credentialResponse.credential,
@@ -108,6 +107,12 @@ const Camera = () => {
                       },
                       body: JSON.stringify({ pic: picture }),
                     });
+                    // .then((res) => res.json())
+                    data = await res.json();
+                    // .then((data) => {
+                    setStudentName(data[owner_name]);
+                    setPostDetails(data[package_number]);
+                    // });
                   }}
                   color="primary"
                 >
@@ -120,10 +125,10 @@ const Camera = () => {
         <CCard>
           <CCardBody className="text-left">
             <CForm className="parcel-search-container">
-            <h1>Add Package Details</h1>
-              
+              <h1>Add Package Details</h1>
+
               <CCol md={6}>
-              <CFormInput
+                <CFormInput
                   id="arrivalDate"
                   type="date"
                   value={new Date().toISOString().slice(0, 10)}
@@ -134,10 +139,11 @@ const Camera = () => {
                 />
               </CCol>
               <CCol md={6}>
-              <CFormInput
+                <CFormInput
                   placeholder="Student Name"
                   id="studentName"
                   label="Student Name"
+                  value={studentName}
                   type="text"
                   onChange={(e) => {
                     setStudentName(e.target.value); // update the state variable when the input changes
@@ -145,7 +151,7 @@ const Camera = () => {
                 />
               </CCol>
               <CCol md={4}>
-              <CFormSelect id="inputState" label="Parcel Type">
+                <CFormSelect id="inputState" label="Parcel Type">
                   <option>Choose Type</option>
                   <option>Amazon</option>
                   <option>Flipkart</option>
@@ -154,15 +160,17 @@ const Camera = () => {
                   <option>BlueDart</option>
                   <option>Amazon</option>
                   <option>Speed Post</option>
-                  onChange={(e) => {
+                  onChange=
+                  {(e) => {
                     setParcelType(e.target.value); // update the state variable when the input changes
                   }}
                 </CFormSelect>
               </CCol>
               <CCol md={6}>
-              <CFormInput
+                <CFormInput
                   placeholder="E.g.: 34429554513900"
                   label="Parcel Number"
+                  value={postDetails}
                   id="postDetails"
                   type="text"
                   onChange={(e) => {
@@ -171,71 +179,27 @@ const Camera = () => {
                 />
               </CCol>
               <CCol xs={12}>
-                <CButton type="submit">Add Package</CButton>
+                <CButton
+                  type="submit"
+                  onClick={() => {
+                    fetch("http://localhost:8000/add-package", {
+                      method: "POST",
+                      headers: {
+                        // Authorization: credentialResponse.credential,
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        package_number: postDetails,
+                        package_type: parcelType,
+                        owner_name: studentName,
+                      }),
+                    });
+                  }}
+                >
+                  Add Package
+                </CButton>
               </CCol>
             </CForm>
-
-            {/* <CForm className="parcel-search-container">
-              <h1>Add Package Details</h1>
-              <CInputGroup>
-                <CInputGroupText>Date of Arrival</CInputGroupText>
-                <CFormInput
-                  id="arrivalDate"
-                  type="date"
-                  value={new Date().toISOString().slice(0, 10)}
-                  onChange={(e) => {
-                    setArrivalDate(e.target.value); // update the state variable when the input changes
-                  }}
-                />
-              </CInputGroup>
-              <CInputGroup>
-                <CInputGroupText>Time of Arrival</CInputGroupText>
-                <CFormInput
-                  id="arrivalDate"
-                  type="time"
-                  value={(new Date().toISOString().slice(11, 19))+330*60*1000}
-                  onChange={(e) => {
-                    setArrivalDate(e.target.value); // update the state variable when the input changes
-                  }}
-                />
-              </CInputGroup>
-              <CInputGroup>
-                <CInputGroupText>Student Name</CInputGroupText>
-                <CFormInput
-                  placeholder="Student Name"
-                  id="studentName"
-                  type="text"
-                  onChange={(e) => {
-                    setStudentName(e.target.value); // update the state variable when the input changes
-                  }}
-                />
-              </CInputGroup>
-              <CInputGroup>
-                <CInputGroupText>Type of Parcel</CInputGroupText>
-                <CFormInput
-                  placeholder="Type of Parcel"
-                  id="parcelType"
-                  type="text"
-                  onChange={(e) => {
-                    setParcelType(e.target.value); // update the state variable when the input changes
-                  }}
-                />
-              </CInputGroup>
-              <CInputGroup>
-                <CInputGroupText>Post Details:</CInputGroupText>
-                <CFormInput
-                  placeholder="Post Details:"
-                  id="postDetails"
-                  type="text"
-                  onChange={(e) => {
-                    setPostDetails(e.target.value); // update the state variable when the input changes
-                  }}
-                />
-              </CInputGroup>
-              <CButton className="search-button" onClick={handleSearch}>
-                Add Package
-              </CButton>
-            </CForm> */}
           </CCardBody>
         </CCard>
       </CCardGroup>

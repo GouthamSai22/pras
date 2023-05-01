@@ -515,7 +515,6 @@ const Dashboard = () => {
           </CCard>
         </CCol>
       </CRow>
-      <Navigate to="/view-packages/uncollected" component={NavLink} />
     </>
   );
 };
