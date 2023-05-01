@@ -188,7 +188,7 @@ const Camera = () => {
                   }}
                 />
               </CInputGroup>
-              {/* <CInputGroup>
+              <CInputGroup>
                 <CInputGroupText>Time of Arrival</CInputGroupText>
                 <CFormInput
                   id="arrivalDate"
@@ -198,7 +198,7 @@ const Camera = () => {
                     setArrivalDate(e.target.value); // update the state variable when the input changes
                   }}
                 />
-              </CInputGroup> */}
+              </CInputGroup>
               <CInputGroup>
                 <CInputGroupText>Student Name</CInputGroupText>
                 <CFormInput
