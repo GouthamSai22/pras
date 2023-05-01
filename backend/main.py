@@ -402,17 +402,26 @@ async def root():
     return {"message": "Hello World"}
 
 @app.get("/auth")
-async def auth(details: dict = Depends(verify_auth_token)):
+async def auth(details: dict = Depends(verify_auth_token), db: Session = Depends(get_db)):
     """
     Test Endpoint to validate user identity
     """
+    email = details["email"]
+    user = User.get_by_email(db, email)
+    if user:
+        user_object = UserFactory.create_user(user)
+        if user_object.role == "admin":
+            details["role"] = "admin"
+        elif user_object.role == "student":
+            details["role"] = "student"
     return details
 
 @app.get("/users/{email}")
 async def get_user(email: str, db: Session = Depends(get_db)):
     user = User.get_by_email(db, email)
     if user:
-        return user
+        user_object = UserFactory.create_user(user)
+        return user_object
     return {"message": "User not found"}
 
 @app.get("/packages/{package_id}")
