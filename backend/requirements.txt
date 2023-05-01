@@ -1,0 +1,14 @@
+aiosql==3.4.1
+psycopg2==2.9.4
+psycopg2-binary==2.9.3
+python-dotenv==0.20.0
+fastapi==0.78.0
+uvicorn==0.17.6
+SQLAlchemy==2.0.10
+pydantic==1.9.1
+pytz==2021.3
+Pillow==9.5.0
+Jinja2==3.1.2
+pytesseract==0.3.10
+pyzbar==0.1.9
+nltk==3.8.1

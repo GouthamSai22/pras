@@ -20,14 +20,15 @@ def authn_user(token):
         if idinfo['hd'] != GSUITE_DOMAIN_NAME:
             raise ValueError('Wrong hosted domain. Only IITH users are allowed')
         
+        # print(idinfo)
         email = idinfo['email']
         name = idinfo['name']
-        given_name = idinfo['given_name']
+        picture = idinfo['picture']
 
         # ID token is valid. Get the user's Google Account ID from the decoded token.
         userid = idinfo['sub']
 
-        return email, name, given_name
+        return email, name, picture
 
     except ValueError:
         # Invalid token
