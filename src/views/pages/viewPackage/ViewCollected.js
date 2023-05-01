@@ -1,22 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import "./viewCollected.css"; // import your custom styles
 import CIcon from "@coreui/icons-react";
 import { cilBarcode, cilPencil, cilTrash } from "@coreui/icons";
-import {
-  CButton,
-  CTooltip,
-  CModal,
-  CModalBody,
-  CModalFooter,
-  CModalHeader,
-  CModalTitle,
-  CAlert,
-} from "@coreui/react";
+import { CButton } from "@coreui/react";
+import { CTooltip } from "@coreui/react";
 
 function viewCollected({}) {
-  const [deleteVisible, setDeleteVisible] = useState(false);
-  const [delAlertVisible, setDelAlertVisible] = useState(false);
-
   const packages = [
     {
       id: 1,
@@ -62,61 +51,23 @@ function viewCollected({}) {
               <td>{pkg.postDetails}</td>
               <td>
                 <CTooltip content="Collect" placement="bottom">
-                  <CButton color="light">
-                    <CIcon icon={cilBarcode}></CIcon>
-                  </CButton>
+                <CButton color="light">
+                  <CIcon icon={cilBarcode}></CIcon>
+                </CButton>
                 </CTooltip>
               </td>
               <td>
                 <CTooltip content="Edit" placement="bottom">
-                  <CButton color="light">
-                    <CIcon icon={cilPencil}></CIcon>
-                  </CButton>
+                <CButton color="light">
+                  <CIcon icon={cilPencil}></CIcon>
+                </CButton>
                 </CTooltip>
               </td>
               <td>
                 <CTooltip content="Delete" placement="bottom">
-                  <CButton
-                    color="light"
-                    onClick={() => setDeleteVisible(!deleteVisible)}
-                  >
-                    <CIcon icon={cilTrash}></CIcon>
-                    <CModal
-                      alignment="center"
-                      scrollable
-                      visible={deleteVisible}
-                      onClose={() => setDeleteVisible(false)}
-                    >
-                      <CModalHeader>
-                        <CModalTitle>Delete Entry</CModalTitle>
-                      </CModalHeader>
-                      <CModalBody>
-                        <p>Are you sure you want to delete this entry?</p>
-                      </CModalBody>
-                      <CModalFooter>
-                        <CButton
-                          color="secondary"
-                          onClick={() => setDeleteVisible(false)}
-                        >
-                          Cancel
-                        </CButton>
-
-                        <CButton color="primary" onClick={() => setDeleteVisible(false)}>Delete</CButton>
-
-
-                        {/* <CAlert
-                          color="primary"
-                          dismissible
-                          visible={delAlertVisible}
-                          onClose={() => setDelAlertVisible(false)}
-                        >
-                          Package Deleted!
-                        </CAlert>
-                        <CButton color="primary" onClick={() => setDelAlertVisible(true)}>Delete</CButton> */}
-                      
-                      </CModalFooter>
-                    </CModal>
-                  </CButton>
+                <CButton color="light">
+                  <CIcon icon={cilTrash}></CIcon>
+                </CButton>
                 </CTooltip>
               </td>
             </tr>
