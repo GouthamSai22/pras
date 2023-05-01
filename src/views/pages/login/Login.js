@@ -59,20 +59,17 @@ const Login = () => {
                                       .then((data) => {
                                         console.log(data);
                                         console.log("Data Logged!");
-                                        const decoded_token = jwt_decode(
-                                          credentialResponse.credential
-                                        );
                                         localStorage.setItem(
                                           "user_name",
-                                          decoded_token["name"]
+                                          data["name"]
                                         );
                                         localStorage.setItem(
                                           "user_email",
-                                          decoded_token["email"]
+                                          data["email"]
                                         );
                                         localStorage.setItem(
                                           "user_pic_url",
-                                          decoded_token["picture"]
+                                          data["picture"]
                                         );
                                       })
                                       .catch((err) => {

@@ -22,14 +22,12 @@ import {
 } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
 
-// import avatar8 from './../../assets/images/avatars/8.jpg'
-
 const AppHeaderDropdown = () => {
   return (
     <CDropdown variant="nav-item">
       <CDropdownToggle placement="bottom-end" className="py-0" caret={false}>
         <CAvatar
-          src="https://lh3.googleusercontent.com/a/AGNmyxYqZ_BHO6q7VKpk8KMFQEoJTLWgvFhmZgD0IkqnQA=s96-c"
+          src={localStorage.getItem("user_pic_url")}
           size="md"
         />
       </CDropdownToggle>

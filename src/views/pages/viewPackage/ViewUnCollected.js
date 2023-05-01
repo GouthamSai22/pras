@@ -11,12 +11,57 @@ import {
   CModalHeader,
   CModalTitle,
   CAlert,
+  CContainer,
+  CCard,
+  CCardBody,
+  CForm,
+  CFormInput,
+  CFormSelect,
+  CCol,
+  CRow,
 } from "@coreui/react";
+import Webcam from "react-webcam";
+
+const WebcamComponent = () => <Webcam />;
+const videoConstraints = {
+  width: 400,
+  height: 400,
+  facingMode: "user",
+};
+
+async function getpackages() {
+  const packages = await fetch("http://localhost:8000/packages", {
+    method: "GET",
+    headers: {
+      Authorization: localStorage.getItem("credential"),
+      // "Content-Type": "application/json",
+    },
+  });
+  packages = packages.json();
+}
 
 function viewUnCollected({}) {
-  const [collectVisible, setCollectVisible] = useState(false);
+  const [arrivalDate, setArrivalDate] = useState("");
+  const [studentName, setStudentName] = useState("");
+  const [parcelType, setParcelType] = useState("");
+  const [postDetails, setPostDetails] = useState("");
+  const [picture, setPicture] = useState("");
 
+  useEffect(() => {
+    localStorage.setItem("capturedImage", JSON.stringify(picture));
+  }, [picture]);
+
+  const webcamRef = React.useRef(null);
+  const capture = React.useCallback(() => {
+    const pictureSrc = webcamRef.current.getScreenshot();
+    setPicture(pictureSrc);
+    console.log("saving...");
+    console.log(typeof localStorage.getItem("capturedImage"));
+  });
+  const [collectVisible, setCollectVisible] = useState(false);
+  const [editVisible, setEditVisible] = useState(false);
   const [deleteVisible, setDeleteVisible] = useState(false);
+
   const [delAlertVisible, setDelAlertVisible] = useState(false);
 
   const packages = [
@@ -47,9 +92,11 @@ function viewUnCollected({}) {
         <thead>
           <tr>
             <th>S.No</th>
-            <th>Date of Pickup</th>
+            <th>Date of Arrival</th>
+            <th>Name of Owner</th>
+            <th>Package Number</th>
             <th>Type of Parcel</th>
-            <th>Post Details</th>
+            <th>Status</th>
             <th></th>
             <th></th>
             <th></th>
@@ -57,14 +104,19 @@ function viewUnCollected({}) {
         </thead>
         <tbody>
           {packages.map((pkg, index) => (
-            <tr key={pkg.id}>
-              <td>{index + 1}</td>
-              <td>{pkg.pickupDate}</td>
-              <td>{pkg.parcelType}</td>
-              <td>{pkg.postDetails}</td>
+            <tr key={index + 1}>
+              <td>{pkg.package_id}</td>
+              <td>{pkg.arrival}</td>
+              <td>{pkg.owner_name}</td>
+              <td>{pkg.package_number}</td>
+              <td>{pkg.package_type}</td>
+              <td>{pkg.status}</td>
               <td>
                 <CTooltip content="Collect" placement="bottom">
-                  <CButton color="light" onClick={() => setCollectVisible(!collectVisible)}>
+                  <CButton
+                    color="light"
+                    onClick={() => setCollectVisible(!collectVisible)}
+                  >
                     <CIcon icon={cilBarcode}></CIcon>
                     <CModal
                       alignment="center"
@@ -77,6 +129,23 @@ function viewUnCollected({}) {
                       </CModalHeader>
                       <CModalBody>
                         <p>Scan ID</p>
+                        <CContainer>
+                          <CRow>
+                            <Webcam
+                              audio={false}
+                              height={400}
+                              ref={webcamRef}
+                              width={400}
+                              screenshotFormat="image/jpeg"
+                              videoConstraints={videoConstraints}
+                            />
+                          </CRow>
+                          <CRow>
+                            <CButton color="primary" shape="rounded-pill">
+                              Capture
+                            </CButton>
+                          </CRow>
+                        </CContainer>
                       </CModalBody>
                       <CModalFooter>
                         <CButton
@@ -86,8 +155,12 @@ function viewUnCollected({}) {
                           Cancel
                         </CButton>
 
-                        <CButton color="primary" onClick={() => setCollectVisible(false)}>Save</CButton>
-                      
+                        <CButton
+                          color="primary"
+                          onClick={() => setCollectVisible(false)}
+                        >
+                          Save
+                        </CButton>
                       </CModalFooter>
                     </CModal>
                   </CButton>
@@ -95,10 +168,123 @@ function viewUnCollected({}) {
               </td>
               <td>
                 <CTooltip content="Edit" placement="bottom">
-                  <CButton color="light">
+                  <CButton
+                    color="light"
+                    onClick={() => setEditVisible(!editVisible)}
+                  >
                     <CIcon icon={cilPencil}></CIcon>
                   </CButton>
                 </CTooltip>
+                <CModal
+                  alignment="center"
+                  scrollable
+                  visible={editVisible}
+                  onClose={() => setEditVisible(false)}
+                >
+                  <CModalHeader>
+                    <CModalTitle>Edit Package Details</CModalTitle>
+                  </CModalHeader>
+                  <CModalBody>
+                    <p>Edit Details</p>
+                    <CCard>
+                      <CCardBody className="text-left">
+                        <CForm className="parcel-search-container">
+                          <h1>Add Package Details</h1>
+
+                          <CCol md={6}>
+                            <CFormInput
+                              id="arrivalDate"
+                              type="date"
+                              value={pkg.pickupDate}
+                              label="Arrival Date"
+                              readOnly
+                            />
+                          </CCol>
+                          <CCol md={6}>
+                            <CFormInput
+                              placeholder="Student Name"
+                              id="studentName"
+                              label="Student Name"
+                              value={pkg.owner_name}
+                              type="text"
+                              onChange={(e) => {
+                                setStudentName(e.target.value); // update the state variable when the input changes
+                              }}
+                            />
+                          </CCol>
+                          <CCol md={4}>
+                            <CFormSelect
+                              id="inputState"
+                              label="Parcel Type"
+                              value={pkg.parcelType}
+                            >
+                              <option>Choose Type</option>
+                              <option>Amazon</option>
+                              <option>Flipkart</option>
+                              <option>Myntra</option>
+                              <option>Nykaa</option>
+                              <option>BlueDart</option>
+                              <option>Amazon</option>
+                              <option>Speed Post</option>
+                              onChange=
+                              {(e) => {
+                                setParcelType(e.target.value); // update the state variable when the input changes
+                              }}
+                            </CFormSelect>
+                          </CCol>
+                          <CCol md={6}>
+                            <CFormInput
+                              placeholder="E.g.: 34429554513900"
+                              label="Parcel Number"
+                              value={pkg.postDetails}
+                              id="postDetails"
+                              type="text"
+                              onChange={(e) => {
+                                setPostDetails(e.target.value); // update the state variable when the input changes
+                              }}
+                            />
+                          </CCol>
+                          <CCol xs={12}>
+                            <CButton
+                              type="submit"
+                              onClick={() => {
+                                fetch("http://localhost:8000/add-package", {
+                                  method: "POST",
+                                  headers: {
+                                    // Authorization: credentialResponse.credential,
+                                    "Content-Type": "application/json",
+                                  },
+                                  body: JSON.stringify({
+                                    package_number: postDetails,
+                                    package_type: parcelType,
+                                    owner_name: studentName,
+                                  }),
+                                });
+                              }}
+                            >
+                              Add Package
+                            </CButton>
+                          </CCol>
+                        </CForm>
+                      </CCardBody>
+                    </CCard>
+                  </CModalBody>
+                  <CModalFooter>
+                    <CButton
+                      color="secondary"
+                      onClick={() => setEditVisible(false)}
+                    >
+                      Cancel
+                    </CButton>
+
+                    <CButton
+                      color="primary"
+                      onClick={() => setEditVisible(false)}
+                    >
+                      Save
+                    </CButton>
+                  </CModalFooter>
+                </CModal>
               </td>
               <td>
                 <CTooltip content="Delete" placement="bottom">
@@ -127,9 +313,12 @@ function viewUnCollected({}) {
                           Cancel
                         </CButton>
 
-                        <CButton color="primary" onClick={() => setDeleteVisible(false)}>Delete</CButton>
-
-
+                        <CButton
+                          color="primary"
+                          onClick={() => setDeleteVisible(false)}
+                        >
+                          Delete
+                        </CButton>
                       </CModalFooter>
                     </CModal>
                   </CButton>
