@@ -348,6 +348,7 @@ def send_email(name, package_id, collected_by, receiver_list):
 def get_details_from_image(img):
     text = pytesseract.image_to_string(img)
     barcodes = pyzbar.decode(img)
+    barcodeData = ""
     for barcode in barcodes:
         barcodeData = barcode.data.decode("utf-8")
     
