@@ -453,6 +453,23 @@ async def get_roll_number_from_camera(request: Request):
     roll = get_roll_number_from_image(img)
     return roll
 
+@app.get("/packages")
+async def get_packages(db: Session = Depends(get_db)):
+    packages = db.query(DBPackage).all()
+    result = []
+    for package in packages:
+        package_dict = package.__dict__
+        collected_package = db.query(DBCollectedPackage).filter(DBCollectedPackage.collected_package_id == package.package_id).first()
+        if collected_package:
+            package_dict["collected_by_email"] = collected_package.collected_by_email
+            package_dict["collection_time"] = collected_package.collection_time
+        else:
+            package_dict["collected_by_email"] = None
+            package_dict["collection_time"] = None
+        package = Package(**package_dict)
+        result.append(package)
+    return result
+
 # send_email('Vikhyath', 'AWB1002', 'Goutham', ['cs20btech11056@iith.ac.in', 'cs20btech11042@iith.ac.in', 'cs19btech11051@iith.ac.in', 'es19btech11017@iith.ac.in'])
 # img = Image.open('images/test_image.jpeg').convert('L')
 # package = get_details_from_image(img)
