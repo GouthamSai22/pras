@@ -107,7 +107,7 @@ class DBCollectedPackage(Base):
     __tablename__ = "package_collection"
 
     collected_package_id = Column(BigInteger, ForeignKey("package.package_id"), primary_key=True, index=True)
-    collected_by_email = Column(String(255), ForeignKey("user.email"), nullable=False, index=True)
+    collected_by_email = Column(String(255), ForeignKey("users.email"), nullable=False, index=True)
     collection_time = Column(DateTime, default=datetime.now(IST), nullable=False)
 
 class FilterStategy(ABC):
@@ -191,10 +191,10 @@ class User(BaseModel):
     
     def notify(self, package: "Package"):
         if package.get_status() == 1:
-            print("arrived")
+            send_email(package.owner_name, package.package_number, [package.observer.email], "arrival")
         elif package.get_status() == 2:
-            print("collected")
-    
+            send_email(package.owner_name, package.package_number, [package.observer.email], "collection", package.observer.email)
+            
     def search_uncollected_packages(self, db: Session, filter_by: Dict[str, Optional[Union[str, datetime]]] = {}):
         filters = {
             "package_number": PackageNumberFilter(),
@@ -295,12 +295,18 @@ class Package(BaseModel):
     def get_status(self):
         return self.status
 
-    def set_status(self, status: int) -> None:
+    def set_status(self, db: Session, status: int) -> None:
         previous_status = self.status
         self.status = status
         if previous_status != status:
             if self.observer:
                 self.observer.notify(self)
+        db_package = db.query(DBPackage).filter(DBPackage.package_id == self.package_id).first()
+        db_package.status = status
+        if status == 2:
+            db_collected_package = DBCollectedPackage(collected_package_id=self.package_id, collected_by_email=self.observer.email)
+            db.add(db_collected_package)
+        db.commit()
 
 class Package_Manager:
     def __init__(self):
@@ -338,20 +344,27 @@ def verify_auth_token(Authorization: str = Header()):
             "name": name, 
             "picture": picture}
 
-def send_email(name, package_id, collected_by, receiver_list):
+def send_email(name, package_id, receiver_list, email_type, collected_by=None):
     gmail_user = os.getenv("GMAIL_USER")
     gmail_password = os.getenv("GMAIL_PASSWORD")
     receiver = ', '.join(receiver_list)
     message = MIMEMultipart("alternative")
-    message["Subject"] = "Package Collected"
+    message["Subject"] = "Package " + package_id + " update"
     message["From"] = gmail_user
     message["To"] = receiver
     
-    with open("collection.html", "r") as f:
-        template_str = f.read()
+    if email_type == "collection":
+        with open("collection.html", "r") as f:
+            template_str = f.read()
+        template = Template(template_str)
+        html = template.render(name=name, package_id=package_id, collected_by=collected_by)
     
-    template = Template(template_str)
-    html = template.render(name=name, package_id=package_id, collected_by=collected_by)
+    elif email_type == "arrival":
+        with open("arrival.html", "r") as f:
+            template_str = f.read()
+        template = Template(template_str)
+        html = template.render(name=name, package_id=package_id)
+
     part = MIMEText(html, "html")
     message.attach(part)
 
@@ -513,8 +526,43 @@ async def add_package(request: Request, db: Session = Depends(get_db)):
         return {"result": "success"}
     return {"result": "failure"}
 
+@app.post("/collect-package")
+async def collect_package(request: Request, db: Session = Depends(get_db)):
+    body = await request.json()
+    img_str = body["pic"].split(",")[1]
+    img_bytes = base64.b64decode(img_str)
+    with open("roll.jpg", "wb") as f:
+        f.write(img_bytes)
+    img = Image.open("roll.jpg").convert("L")
+    roll = get_roll_number_from_image(img)
+    if roll["roll_number"] == "":
+        return {"result": "roll number not detected"}
+    collected_email = roll["roll_number"] + "@iith.ac.in"
+    user = User.get_by_email(db, collected_email)
 
-# send_email('Vikhyath', 'AWB1002', 'Goutham', ['cs20btech11056@iith.ac.in', 'cs20btech11042@iith.ac.in', 'cs19btech11051@iith.ac.in', 'es19btech11017@iith.ac.in'])
+    if user:
+        user_obect = UserFactory.create_user(user)
+    else:
+        return {"result": "user not found"}
+    
+    package_id = body["package_id"]
+    package_object = Package.get_by_id(db, package_id)
+    if package_object:
+        pass
+    else:
+        return {"result": "package not found"}
+    if package_object.get_status() == 0:
+        return {"result": "package hasn't arrived yet"}
+    elif package_object.get_status() == 2:
+        return {"result": "package already collected"}
+    
+    package_object.set_observer(user_obect)
+    package_object.set_status(db, 2)
+
+    return {"result": "success"}
+
+
+# send_email('Vikhyath', 'AWB1002', ['cs20btech11056@iith.ac.in'], email_type="arrival")
 # img = Image.open('images/test_image.jpeg').convert('L')
 # package = get_details_from_image(img)
 # print(package)
