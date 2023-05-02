@@ -21,7 +21,7 @@ const Login = () => {
   return (
     <>
       {loginSuccess ? (
-        <Navigate to="/view-packages/uncollected" replace />
+        <Navigate to="/view-packages/all" replace />
       ) : (
         <div className="bg-light min-vh-100 d-flex flex-row align-items-center">
           <CContainer>
