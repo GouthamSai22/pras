@@ -189,6 +189,23 @@ class User(BaseModel):
             return User.from_orm(user)
         return None
     
+    @classmethod
+    def get_all_packages(cls, db: Session) -> List["Package"]:
+        packages = db.query(DBPackage).all()
+        result = []
+        for package in packages:
+            package_dict = package.__dict__
+            collected_package = db.query(DBCollectedPackage).filter(DBCollectedPackage.collected_package_id == package.package_id).first()
+            if collected_package:
+                package_dict["collected_by_email"] = collected_package.collected_by_email
+                package_dict["collection_time"] = collected_package.collection_time
+            else:
+                package_dict["collected_by_email"] = None
+                package_dict["collection_time"] = None
+            package = Package(**package_dict)
+            result.append(package)
+        return result
+    
     def notify(self, package: "Package"):
         if package.get_status() == 1:
             send_email(package.owner_name, package.package_number, [package.observer.email], "arrival")
@@ -502,20 +519,8 @@ async def get_roll_number_from_camera(request: Request):
 
 @app.get("/packages")
 async def get_packages(db: Session = Depends(get_db)):
-    packages = db.query(DBPackage).all()
-    result = []
-    for package in packages:
-        package_dict = package.__dict__
-        collected_package = db.query(DBCollectedPackage).filter(DBCollectedPackage.collected_package_id == package.package_id).first()
-        if collected_package:
-            package_dict["collected_by_email"] = collected_package.collected_by_email
-            package_dict["collection_time"] = collected_package.collection_time
-        else:
-            package_dict["collected_by_email"] = None
-            package_dict["collection_time"] = None
-        package = Package(**package_dict)
-        result.append(package)
-    return result
+    packages = User.get_all_packages(db)
+    return packages
 
 @app.post("/add-package")
 async def add_package(request: Request, db: Session = Depends(get_db)):
