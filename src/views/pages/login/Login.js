@@ -71,6 +71,10 @@ const Login = () => {
                                           "user_pic_url",
                                           data["picture"]
                                         );
+                                        localStorage.setItem(
+                                          "isAdmin",
+                                          data["isAdmin"]
+                                        );
                                       })
                                       .catch((err) => {
                                         console.log(err);

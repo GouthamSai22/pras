@@ -29,6 +29,20 @@ function viewCollected({}) {
     console.log("sel:", selectedDelRow.id);
     setDeletePkg(selectedDelRow);
     console.log("del:", deletePkg.id);
+  const [collectVisible, setCollectVisible] = useState(false);
+
+  const [deleteVisible, setDeleteVisible] = useState(false);
+
+  const [deletePkgId, setDeletePkgID] = useState([]);
+
+  const [delAlertVisible, setDelAlertVisible] = useState(false);
+
+  const [selectedDelRow, setSelectedDelRow] = useState(null);
+
+  function handleDeleteModalSubmit(modifiedData) {
+    console.log("sel:", selectedDelRow.id);
+    setDeletePkgID(selectedDelRow);
+    console.log("del:", deletePkgId.id);
 
     fetch("http://localhost:8000/add-package", {
       method: "POST",
@@ -43,6 +57,11 @@ function viewCollected({}) {
     })
       .then((res) => res.json())
       .then((data) => {
+        // if (data["result"] === "success") {
+        //   <CAlert color="primary">Data added succesfully!</CAlert>;
+        // } else {
+        //   <CAlert color="primary">Error adding data!</CAlert>;
+        // }
         console.log("sumsex");
       })
       .catch((err) => {
@@ -55,11 +74,13 @@ function viewCollected({}) {
     console.log("modal submit");
 
     // setDeletePkg((prevData) =>
+    // setDeletePkgID((prevData) =>
     //   prevData.map((row) => {
     //     row.id === selectedDelRow.id ? { ...row, ...modifiedData } : row;
     //   })
     // );
   };
+  }
 
   const handleRemove = (e) => {
     console.log("DELETE ME");
@@ -74,6 +95,7 @@ function viewCollected({}) {
     //   console.log(e);
     //   console.log(parentButton);
     //   setDeletePkg(e);
+    //   setDeletePkgID(e);
     // }
     // else
     // {
@@ -104,7 +126,7 @@ function viewCollected({}) {
 
   return (
     <div className="package-table">
-      <h1>Collected Package Table</h1>
+      <h1>Uncollected Package Table</h1>
       <table>
         <thead>
           <tr>
