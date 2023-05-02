@@ -481,7 +481,11 @@ async def get_packages(db: Session = Depends(get_db)):
 @app.post("/add-package")
 async def add_package(request: Request, db: Session = Depends(get_db)):
     body = await request.json()
+    body["status"] = 1
     package = Package.add_package(db, body)
+    if package:
+        return {"result": "success"}
+    return {"result": "failure"}
 
 
 # send_email('Vikhyath', 'AWB1002', 'Goutham', ['cs20btech11056@iith.ac.in', 'cs20btech11042@iith.ac.in', 'cs19btech11051@iith.ac.in', 'es19btech11017@iith.ac.in'])
