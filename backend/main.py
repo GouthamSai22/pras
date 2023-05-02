@@ -306,6 +306,18 @@ class Package(BaseModel):
         db.refresh(db_package)
         return cls.from_orm(db_package)
     
+    @classmethod
+    def delete_package(cls, db: Session) -> None:
+        db_package = db.query(DBPackage).filter(DBPackage.package_id == cls.package_id).first()
+        if not db_package:
+            return None
+        db_collected_package = db.query(DBCollectedPackage).filter(DBCollectedPackage.collected_package_id == cls.package_id).first()
+        if db_collected_package:
+            db.delete(db_collected_package)
+        db.delete(db_package)
+        db.commit()
+        return "Package deleted successfully."
+
     def set_observer(self, observer: User) -> None:
         self.observer = observer
     
@@ -319,7 +331,8 @@ class Package(BaseModel):
             if self.observer:
                 self.observer.notify(self)
         db_package = db.query(DBPackage).filter(DBPackage.package_id == self.package_id).first()
-        db_package.status = status
+        if db_package:
+            db_package.status = status
         if status == 2:
             db_collected_package = DBCollectedPackage(collected_package_id=self.package_id, collected_by_email=self.observer.email)
             db.add(db_collected_package)
@@ -566,6 +579,17 @@ async def collect_package(request: Request, db: Session = Depends(get_db)):
 
     return {"result": "success"}
 
+@app.delete("/delete-package")
+async def delete_package(request: Request, db: Session = Depends(get_db)):
+    body = await request.json()
+    package_id = body["package_id"]
+    package_object = Package.get_by_id(db, package_id)
+    if not package_object:
+        return {"result": "package not found"}
+    response = package_object.delete_package(db)
+    if not response:
+        return {"result": "package not found"}
+    return {"result": "success"}
 
 # send_email('Vikhyath', 'AWB1002', ['cs20btech11056@iith.ac.in'], email_type="arrival")
 # img = Image.open('images/test_image.jpeg').convert('L')
