@@ -306,6 +306,17 @@ class Package(BaseModel):
         db.refresh(db_package)
         return cls.from_orm(db_package)
     
+    
+    def modify_package(self, db: Session, details: dict) -> "Package":
+        db_package = db.query(DBPackage).filter(DBPackage.package_id == self.package_id).first()
+        if not db_package:
+            return None
+        for key, value in details.items():
+            setattr(db_package, key, value)
+        db.commit()
+        db.refresh(db_package)
+        return self.from_orm(db_package)
+    
     @classmethod
     def delete_package(cls, db: Session) -> None:
         db_package = db.query(DBPackage).filter(DBPackage.package_id == cls.package_id).first()
@@ -555,7 +566,7 @@ async def collect_package(request: Request, db: Session = Depends(get_db)):
     roll = get_roll_number_from_image(img)
     if roll["roll_number"] == "":
         return {"result": "roll number not detected"}
-    collected_email = roll["roll_number"] + "@iith.ac.in"
+    collected_email = roll["roll_number"].lower() + "@iith.ac.in"
     user = User.get_by_email(db, collected_email)
 
     if user:
@@ -587,6 +598,18 @@ async def delete_package(request: Request, db: Session = Depends(get_db)):
     if not package_object:
         return {"result": "package not found"}
     response = package_object.delete_package(db)
+    if not response:
+        return {"result": "package not found"}
+    return {"result": "success"}
+
+@app.patch("/modify-package")
+async def modify_package(request: Request, db: Session = Depends(get_db)):
+    body = await request.json()
+    package_id = body["package_id"]
+    package_object = Package.get_by_id(db, package_id)
+    if not package_object:
+        return {"result": "package not found"}
+    response = package_object.modify_package(db, body)
     if not response:
         return {"result": "package not found"}
     return {"result": "success"}
