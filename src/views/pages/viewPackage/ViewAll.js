@@ -184,7 +184,7 @@ function viewAll() {
     {
       package_id: 1,
       package_number: "AWB1002",
-      status: 0,
+      status: 1,
       owner_name: "Vikhyath Sai Kothamasu",
       package_type: "Amazon",
       arrival: "2023-04-23T15:39:49.046959",

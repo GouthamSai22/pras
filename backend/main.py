@@ -555,7 +555,8 @@ async def collect_package(request: Request, db: Session = Depends(get_db)):
     roll = get_roll_number_from_image(img)
     if roll["roll_number"] == "":
         return {"result": "roll number not detected"}
-    collected_email = roll["roll_number"] + "@iith.ac.in"
+    collected_email = roll["roll_number"].lower() + "@iith.ac.in"
+    print(collected_email)
     user = User.get_by_email(db, collected_email)
 
     if user:

@@ -223,9 +223,9 @@ const barcodescanner = () => {
               <CRow>
                 <Webcam
                   audio={false}
-                  height={400}
+                  height="50%"
                   ref={webcamRef}
-                  width={400}
+                  width="100%"
                   screenshotFormat="image/jpeg"
                   videoConstraints={videoConstraints}
                 />
@@ -246,7 +246,7 @@ const barcodescanner = () => {
           ) : (
             <CCard className="p-4">
               <center>
-                <img src={picture} height="80%" width="70%" />
+                <img src={picture} />
               </center>
               <CRow className="justify-content-center">
                 <CCol className="justify-content-center">
@@ -262,8 +262,8 @@ const barcodescanner = () => {
                 </CCol>
                 <CCol>
                   <CButton
-                    onClick={async () => {
-                      const res = await fetch("http://localhost:8000/collect-package", {
+                    onClick={() => {
+                      fetch("http://localhost:8000/collect-package", {
                         method: "POST",
                         headers: {
                           // Authorization: credentialResponse.credential,
@@ -273,9 +273,12 @@ const barcodescanner = () => {
                           pic: picture,
                           package_id: serialNumber,
                         }),
+
+                      })
+                      .then((res) => res.json())
+                      .then((data)=>{
+                        console.log(data);
                       });
-                      data = await res.json();
-                      console.log(data["result"]);
                     }}
                     color="primary"
                   >
