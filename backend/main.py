@@ -210,8 +210,9 @@ class User(BaseModel):
             send_email(package.owner_name, package.package_number, [package.observer.email], "arrival")
         elif package.get_status() == 2:
             send_email(package.owner_name, package.package_number, [package.observer.email], "collection", package.observer.email)
-            
-    def filter_all_packages(self, db: Session, filter_strategy: FilterStategy, filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> List["Package"]:
+
+    @classmethod      
+    def filter_all_packages(cls, db: Session, filter_strategy: FilterStategy, filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> List["Package"]:
         result = User.get_all_packages(db)
         result = filter_strategy.apply_filter(result, filter_value, from_date, to_date)
         return result
@@ -480,7 +481,8 @@ async def signup(request: Request, details: dict = Depends(verify_auth_token), d
     Endpoint to register a new user
     """
     body = await request.json()
-    body.update(details)
+    body["email"] = details["email"]
+    body["name"] = details["name"]
     student = Student.add_student(db, body)
     print(student)
     print(type(student))
@@ -528,6 +530,22 @@ async def get_roll_number_from_camera(request: Request):
 @app.get("/packages")
 async def get_packages(db: Session = Depends(get_db)):
     packages = User.get_all_packages(db)
+    return packages
+
+@app.get("/filter-packages")
+async def filter_packages(request: Request, db: Session = Depends(get_db)):
+    body = await request.json()
+    filters = {"package_number": PackageNumberFilter(),
+               "owner_name": OwnerNameFilter(),
+               "package_type": PackageTypeFilter(),
+               "arrival": ArrivalFilter(),
+               "collected_by_email": CollectedByEmailFilter(),
+               "collection_time": CollectionTimeFilter()}
+    filter_applied = filters[body["filter"]]
+    filter_value = body["value"]
+    from_date = body["from_date"]
+    to_date = body["to_date"]
+    packages = User.filter_all_packages(db=db, filter_strategy=filter_applied, filter_value=filter_value, from_date=from_date, to_date=to_date)
     return packages
 
 @app.post("/add-package")
