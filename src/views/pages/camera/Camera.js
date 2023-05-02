@@ -196,15 +196,14 @@ const Camera = () => {
                     })
                       .then((res) => res.json())
                       .then((data) => {
-                        if (data["result"] === "success") {
-                          <CAlert color="primary">
-                            Data added succesfully!
-                          </CAlert>;
-                        }
-                        else{
-                          <CAlert color="primary">
-                            Error adding data!
-                          </CAlert>;
+                        {
+                          data["result"] === "success" ? (
+                            <CAlert color="primary">
+                              Data added succesfully!
+                            </CAlert>
+                          ) : (
+                            <CAlert color="primary">error adding data!</CAlert>
+                          );
                         }
                       })
                       .catch((err) => {
