@@ -222,6 +222,18 @@ class Student(User):
             return cls(**user.dict())
         raise ValueError("Invalid user role for creating a student.")
 
+    @classmethod
+    def add_student(cls, db: Session, details: dict) -> Optional["Student"]:
+        user = User.get_by_email(db, details["email"])
+        if user:
+            return None
+        user = User(**details, role=UserRole.STUDENT)
+        db_user = DBUser(**user.dict())
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
+        return cls.create(user)
+
 class Admin(User):
     @classmethod
     def create(cls, user: User):
@@ -419,10 +431,22 @@ async def auth(details: dict = Depends(verify_auth_token), db: Session = Depends
     if user:
         user_object = UserFactory.create_user(user)
         if user_object.role == "admin":
-            details["role"] = "admin"
+            details["isAdmin"] = True
         elif user_object.role == "student":
-            details["role"] = "student"
+            details["isAdmin"] = False
     return details
+
+@app.post("/signup")
+async def signup(request: Request, details: dict = Depends(verify_auth_token), db: Session = Depends(get_db)):
+    """
+    Endpoint to register a new user
+    """
+    body = await request.json()
+    details.update(body)
+    student = Student.add_student(details)
+    if student:
+        return {"result": "success"}
+    return {"result": "failure"}
 
 @app.get("/users/{email}")
 async def get_user(email: str, db: Session = Depends(get_db)):
