@@ -199,10 +199,9 @@ function viewAll() {
       observer: null,
     },
   ];
-  
-  // const isAdmin = false;
-  const isAdmin = localStorage.getItem("isAdmin");
 
+  // const isAdmin = false;
+  const isAdmin = JSON.parse(localStorage.getItem("isAdmin"));
 
   return (
     <div className="package-table">
@@ -230,19 +229,21 @@ function viewAll() {
                   ? "Uncollected"
                   : "Expected"}{" "}
               </td>{" "}
-              {isAdmin && <td>
-                <CNavLink to="/barcode" component={NavLink}>
-                  <CButton
-                    onClick={() => {
-                      // console.log(pkg);
-                      localStorage.setItem("curr_row", JSON.stringify(pkg));
-                      // console.log(localStorage.getItem("curr_row"));
-                    }}
-                  >
-                    <CIcon icon={cilPencil} />{" "}
-                  </CButton>{" "}
+              {isAdmin && (
+                <td>
+                  <CNavLink to="/barcode" component={NavLink}>
+                  <CTooltip content="Edit" placement="bottom">
+                  <CButton color="light" onClick={() => {
+                          // console.log(pkg);
+                          localStorage.setItem("curr_row", JSON.stringify(pkg));
+                          // console.log(localStorage.getItem("curr_row"));
+                        }}>
+                    <CIcon icon={cilPencil}></CIcon>
+                  </CButton>
+                </CTooltip>
                 </CNavLink>{" "}
-              </td>}{" "}
+                </td>
+              )}{" "}
             </tr>
           ))}{" "}
         </tbody>{" "}
