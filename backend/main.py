@@ -227,12 +227,12 @@ class Student(User):
         user = User.get_by_email(db, details["email"])
         if user:
             return None
-        user = User(**details, role=UserRole.STUDENT)
-        db_user = DBUser(**user.dict())
+        details["role"] = UserRole.STUDENT
+        db_user = DBUser(**details)
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
-        return cls.create(user)
+        return cls.from_orm(db_user)
 
 class Admin(User):
     @classmethod
@@ -442,8 +442,10 @@ async def signup(request: Request, details: dict = Depends(verify_auth_token), d
     Endpoint to register a new user
     """
     body = await request.json()
-    details.update(body)
-    student = Student.add_student(details)
+    body.update(details)
+    student = Student.add_student(db, body)
+    print(student)
+    print(type(student))
     if student:
         return {"result": "success"}
     return {"result": "failure"}
