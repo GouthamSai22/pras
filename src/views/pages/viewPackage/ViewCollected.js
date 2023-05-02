@@ -1,11 +1,86 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./viewCollected.css"; // import your custom styles
 import CIcon from "@coreui/icons-react";
 import { cilBarcode, cilPencil, cilTrash } from "@coreui/icons";
-import { CButton } from "@coreui/react";
-import { CTooltip } from "@coreui/react";
+import {
+  CButton,
+  CTooltip,
+  CModal,
+  CModalBody,
+  CModalFooter,
+  CModalHeader,
+  CModalTitle,
+  CAlert,
+} from "@coreui/react";
 
 function viewCollected({}) {
+  //modals
+  const [collectVisible, setCollectVisible] = useState(false);
+  const [deleteVisible, setDeleteVisible] = useState(false);
+  
+  // row specific
+  const [deletePkg, setDeletePkg] = useState([]);
+  const [selectedDelRow, setSelectedDelRow] = useState(null);
+
+  // const [delAlertVisible, setDelAlertVisible] = useState(false);
+
+
+  const handleDeleteModalSubmit = (modifiedData) => {
+    console.log("sel:", selectedDelRow.id);
+    setDeletePkg(selectedDelRow);
+    console.log("del:", deletePkg.id);
+
+    fetch("http://localhost:8000/add-package", {
+      method: "POST",
+      headers: {
+        // Authorization: credentialResponse.credential,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        del_package_id: selectedDelRow.id,
+        del_package_details: selectedDelRow.postDetails,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("sumsex");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    console.log("sel:", selectedDelRow.id);
+
+    setDeleteVisible(false);
+    console.log("modal submit");
+
+    // setDeletePkg((prevData) =>
+    //   prevData.map((row) => {
+    //     row.id === selectedDelRow.id ? { ...row, ...modifiedData } : row;
+    //   })
+    // );
+  };
+
+  const handleRemove = (e) => {
+    console.log("DELETE ME");
+    // console.log(e.target.value);
+    console.log(e);
+    setSelectedDelRow(e);
+
+    setDeleteVisible(!deleteVisible);
+
+    // if(parentButton)
+    // {
+    //   console.log(e);
+    //   console.log(parentButton);
+    //   setDeletePkg(e);
+    // }
+    // else
+    // {
+    //   console.log("Modal button, pfft");
+    // }
+  };
+
   const packages = [
     {
       id: 1,
@@ -51,23 +126,89 @@ function viewCollected({}) {
               <td>{pkg.postDetails}</td>
               <td>
                 <CTooltip content="Collect" placement="bottom">
-                <CButton color="light">
-                  <CIcon icon={cilBarcode}></CIcon>
-                </CButton>
+                  <CButton
+                    color="light"
+                    onClick={() => setCollectVisible(!collectVisible)}
+                  >
+                    <CIcon icon={cilBarcode}></CIcon>
+                    <CModal
+                      alignment="center"
+                      scrollable
+                      visible={collectVisible}
+                      onClose={() => setCollectVisible(false)}
+                    >
+                      <CModalHeader>
+                        <CModalTitle>ID Card Scanner</CModalTitle>
+                      </CModalHeader>
+                      <CModalBody>
+                        <p>Scan ID</p>
+                      </CModalBody>
+                      <CModalFooter>
+                        <CButton
+                          color="secondary"
+                          onClick={() => setCollectVisible(false)}
+                        >
+                          Cancel
+                        </CButton>
+
+                        <CButton
+                          color="primary"
+                          onClick={() => setCollectVisible(false)}
+                        >
+                          Save
+                        </CButton>
+                      </CModalFooter>
+                    </CModal>
+                  </CButton>
                 </CTooltip>
               </td>
               <td>
                 <CTooltip content="Edit" placement="bottom">
-                <CButton color="light">
-                  <CIcon icon={cilPencil}></CIcon>
-                </CButton>
+                  <CButton color="light">
+                    <CIcon icon={cilPencil}></CIcon>
+                  </CButton>
                 </CTooltip>
               </td>
               <td>
                 <CTooltip content="Delete" placement="bottom">
-                <CButton color="light">
-                  <CIcon icon={cilTrash}></CIcon>
-                </CButton>
+                  <CButton
+                    className="rowDeleteButton"
+                    color="light"
+                    // value={pkg}
+                    // onClick={handleRemove}
+                    // onClick={() => setDeleteVisible(!deleteVisible)}
+                    onClick={() => handleRemove(pkg)}
+                  >
+                    <CIcon icon={cilTrash}></CIcon>
+                    <CModal
+                      alignment="center"
+                      scrollable
+                      visible={deleteVisible}
+                      onClose={() => setDeleteVisible(false)}
+                    >
+                      <CModalHeader>
+                        <CModalTitle>Delete Entry</CModalTitle>
+                      </CModalHeader>
+                      <CModalBody>
+                        <p>Are you sure you want to delete this entry?</p>
+                      </CModalBody>
+                      <CModalFooter>
+                        <CButton
+                          color="secondary"
+                          onClick={() => setDeleteVisible(false)}
+                        >
+                          Cancel
+                        </CButton>
+                        <CButton
+                          color="primary"
+                          // onClick={() => setDeleteVisible(false)}
+                          onClick={handleDeleteModalSubmit}
+                        >
+                          Delete
+                        </CButton>
+                      </CModalFooter>
+                    </CModal>
+                  </CButton>
                 </CTooltip>
               </td>
             </tr>
