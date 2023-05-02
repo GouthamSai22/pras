@@ -21,7 +21,7 @@ const Login = () => {
   return (
     <>
       {loginSuccess ? (
-        <Navigate to="/view-packages/uncollected" replace />
+        <Navigate to="/view-packages/all" replace />
       ) : (
         <div className="bg-light min-vh-100 d-flex flex-row align-items-center">
           <CContainer>
@@ -102,9 +102,7 @@ const Login = () => {
                       <div>
                         <h2>Sign up</h2>
                         <p>
-                          Lorem ipsum dolor sit amet, consectetur adipisicing
-                          elit, sed do eiusmod tempor incididunt ut labore et
-                          dolore magna aliqua.
+                          If you are a new user, Enter your email address to create a new account.
                         </p>
                         <CNavLink to="/register" component={NavLink}>
                           <CButton

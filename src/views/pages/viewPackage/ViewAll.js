@@ -53,10 +53,10 @@ function viewAll() {
         onClose={() => setEditVisible(false)}
       >
         <CModalHeader>
-          <CModalTitle> Edit Package Details </CModalTitle>{" "}
-        </CModalHeader>{" "}
+          <CModalTitle> Edit Package Details </CModalTitle>
+        </CModalHeader>
         <CModalBody>
-          <p> Edit Details </p>{" "}
+          <p> Edit Details </p>
           <CCard>
             <CCardBody className="text-left">
               <CForm className="parcel-search-container">
@@ -69,7 +69,7 @@ function viewAll() {
                     label="Arrival Date"
                     readOnly
                   />
-                </CCol>{" "}
+                </CCol>
                 <CCol md={6}>
                   <CFormInput
                     id="studentName"
@@ -79,24 +79,24 @@ function viewAll() {
                     onChange={(e) => {
                       setStudentName(e.target.value); // update the state variable when the input changes
                     }}
-                  />{" "}
-                </CCol>{" "}
+                  />
+                </CCol>
                 <CCol md={4}>
                   <CFormSelect
                     id="inputState"
                     label="Parcel Type"
                     value={parcelType}
                   >
-                    <option> Choose Type </option> <option> Amazon </option>{" "}
-                    <option> Flipkart </option> <option> Myntra </option>{" "}
-                    <option> Nykaa </option> <option> BlueDart </option>{" "}
+                    <option> Choose Type </option> <option> Amazon </option>
+                    <option> Flipkart </option> <option> Myntra </option>
+                    <option> Nykaa </option> <option> BlueDart </option>
                     <option> Amazon </option> <option> Speed Post </option>
-                    onChange ={" "}
+                    onChange =
                     {(e) => {
                       setParcelType(e.target.value); // update the state variable when the input changes
-                    }}{" "}
-                  </CFormSelect>{" "}
-                </CCol>{" "}
+                    }}
+                  </CFormSelect>
+                </CCol>
                 <CCol md={6}>
                   <CFormInput
                     label="Parcel Number"
@@ -106,8 +106,8 @@ function viewAll() {
                     onChange={(e) => {
                       setPostDetails(e.target.value); // update the state variable when the input changes
                     }}
-                  />{" "}
-                </CCol>{" "}
+                  />
+                </CCol>
                 <CCol xs={12}>
                   <CButton
                     type="submit"
@@ -127,33 +127,32 @@ function viewAll() {
                       console.log(postDetails);
                     }}
                   >
-                    Add Package{" "}
-                  </CButton>{" "}
-                </CCol>{" "}
-              </CForm>{" "}
-            </CCardBody>{" "}
-          </CCard>{" "}
-        </CModalBody>{" "}
+                    Add Package
+                  </CButton>
+                </CCol>
+              </CForm>
+            </CCardBody>
+          </CCard>
+        </CModalBody>
         <CModalFooter>
           <CButton color="secondary" onClick={() => setEditVisible(false)}>
-            Cancel{" "}
+            Cancel
           </CButton>
           <CButton color="primary" onClick={() => setEditVisible(false)}>
-            Save{" "}
-          </CButton>{" "}
-        </CModalFooter>{" "}
+            Save
+          </CButton>
+        </CModalFooter>
       </CModal>
     );
   }
 
-  // const [packages, setPackages] = useState([]);
-
+  
   const [picture, setPicture] = useState("");
-
+  
   useEffect(() => {
     localStorage.setItem("capturedImage", JSON.stringify(picture));
   }, [picture]);
-
+  
   const webcamRef = React.useRef(null);
   const capture = React.useCallback(() => {
     const pictureSrc = webcamRef.current.getScreenshot();
@@ -161,93 +160,109 @@ function viewAll() {
     console.log("saving...");
     console.log(typeof localStorage.getItem("capturedImage"));
   });
-  const [collectVisible, setCollectVisible] = useState(false);
+  // const [collectVisible, setCollectVisible] = useState(false);
   const [editVisible, setEditVisible] = useState(false);
-  const [deleteVisible, setDeleteVisible] = useState(false);
+  // const [deleteVisible, setDeleteVisible] = useState(false);
+  
+  // const [delAlertVisible, setDelAlertVisible] = useState(false);
+  
+  const [packages, setPackages] = useState([]);
+  
+  const getpackages = async () => {
+    const packageres = await fetch("http://localhost:8000/packages", {
+      method: "GET",
+    });
+    const data = await packageres.json();
+    setPackages(data);
+  };
+  
+  useEffect(() => {
+    getpackages();
+  }, []);
+  // const packages = [
+  //   {
+  //     package_id: 1,
+  //     package_number: "AWB1002",
+  //     status: 1,
+  //     owner_name: "Vikhyath Sai Kothamasu",
+  //     package_type: "Amazon",
+  //     arrival: "2023-04-23T15:39:49.046959",
+  //     collection_time: "2023-04-23T15:41:25.323116",
+  //     collected_by_email: "cs20btech11056@iith.ac.in",
+  //     observer: null,
+  //   },
+  //   {
+  //     package_id: 2,
+  //     package_number: "AWB1003",
+  //     status: 1,
+  //     owner_name: "Goutham Sai",
+  //     package_type: "Amazon",
+  //     arrival: "2023-05-02T01:18:39.394319",
+  //     collection_time: null,
+  //     collected_by_email: null,
+  //     observer: null,
+  //   },
+  // ];
 
-  const [delAlertVisible, setDelAlertVisible] = useState(false);
-
-  // const getpackages = async () => {
-  //   const packageres = await fetch("http://localhost:8000/packages", {
-  //     method: "GET",
-  //   });
-  //   const data = await packageres.json();
-  //   setPackages(data);
-  // };
-
-  const packages = [
-    {
-      package_id: 1,
-      package_number: "AWB1002",
-      status: 1,
-      owner_name: "Vikhyath Sai Kothamasu",
-      package_type: "Amazon",
-      arrival: "2023-04-23T15:39:49.046959",
-      collection_time: "2023-04-23T15:41:25.323116",
-      collected_by_email: "cs20btech11056@iith.ac.in",
-      observer: null,
-    },
-    {
-      package_id: 2,
-      package_number: "AWB1003",
-      status: 1,
-      owner_name: "Goutham Sai",
-      package_type: "Amazon",
-      arrival: "2023-05-02T01:18:39.394319",
-      collection_time: null,
-      collected_by_email: null,
-      observer: null,
-    },
-  ];
-
-  // const isAdmin = false;
-  const isAdmin = JSON.parse(localStorage.getItem("isAdmin"));
+  const isAdmin = true;
+  // const isAdmin = JSON.parse(localStorage.getItem("isAdmin"));
 
   return (
     <div className="package-table">
-      <h1> View All Packages </h1>{" "}
+      <h1> View All Packages </h1>
       <table>
         <thead>
           <tr>
-            <th> S.No </th> <th> Date of Arrival </th> <th> Name of Owner </th>{" "}
-            <th> Package Number </th> <th> Type of Parcel </th>{" "}
-            <th> Status </th> <th> </th> <th> </th> <th> </th>{" "}
-          </tr>{" "}
-        </thead>{" "}
+            <th> S.No </th>
+            <th> Date of Arrival </th>
+            <th> Name of Owner </th>
+            <th> Package Number </th>
+            <th> Type of Parcel </th>
+            <th> Status </th>
+            <th> Collected By</th>
+            <th> Collected On</th>
+            <th> </th>
+          </tr>
+        </thead>
         <tbody>
-          {" "}
           {packages.map((pkg, index) => (
             <tr key={index + 1}>
-              <td> {pkg.package_id} </td> <td> {pkg.arrival.slice(0, 10)} </td>{" "}
-              <td> {pkg.owner_name} </td> <td> {pkg.package_number} </td>{" "}
-              <td> {pkg.package_type} </td>{" "}
+              <td> {pkg.package_id} </td>
+              <td> {pkg.arrival.slice(0, 10)} </td>
+              <td> {pkg.owner_name} </td>
+              <td> {pkg.package_number} </td>
+              <td> {pkg.package_type} </td>
               <td>
-                {" "}
                 {pkg.status === 2
                   ? "Collected"
                   : pkg.status === 1
                   ? "Uncollected"
-                  : "Expected"}{" "}
-              </td>{" "}
+                  : "Expected"}
+              </td>
+              <td>{pkg.collected_by_email?(pkg.collected_by_email):("-")}</td>
+              <td>{pkg.collection_time?(pkg.collection_time.slice(0, 10)):("-")}</td>
               {isAdmin && (
                 <td>
                   <CNavLink to="/barcode" component={NavLink}>
-                  <CTooltip content="Edit" placement="bottom">
-                  <CButton color="light" onClick={() => {
+                    <CTooltip content="Edit" placement="bottom">
+                      <CButton
+                        color="light"
+                        onClick={() => {
                           // console.log(pkg);
                           localStorage.setItem("curr_row", JSON.stringify(pkg));
                           // console.log(localStorage.getItem("curr_row"));
-                        }}>
-                    <CIcon icon={cilPencil}></CIcon>
-                  </CButton>
-                </CTooltip>
-                </CNavLink>{" "}
+                        }}
+                      >
+                        <CIcon icon={cilPencil}></CIcon>
+                      </CButton>
+                    </CTooltip>
+                  </CNavLink>
                 </td>
-              )}{" "}
+              )}
             </tr>
-          ))}{" "}
-        </tbody>{" "}
-      </table>{" "}
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
