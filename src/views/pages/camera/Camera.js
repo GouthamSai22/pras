@@ -193,7 +193,23 @@ const Camera = () => {
                         package_type: parcelType,
                         owner_name: studentName,
                       }),
-                    });
+                    })
+                      .then((res) => res.json())
+                      .then((data) => {
+                        if (data["result"] === "success") {
+                          <CAlert color="primary">
+                            Data added succesfully!
+                          </CAlert>;
+                        }
+                        else{
+                          <CAlert color="primary">
+                            Error adding data!
+                          </CAlert>;
+                        }
+                      })
+                      .catch((err) => {
+                        console.log(err);
+                      });
                   }}
                 >
                   Add Package
@@ -207,3 +223,50 @@ const Camera = () => {
   );
 };
 export default Camera;
+
+// import React, { useState } from 'react'
+// import { CAlert } from '@coreui/react'
+
+// const TableExample = () => {
+//   const [data, setData] = useState([
+//     // some JSON data
+//   ])
+
+//   const [selectedRow, setSelectedRow] = useState(null)
+
+//   const handleRowClick = (row, e) => {
+//     // set the selected row state
+//     setSelectedRow(row)
+//   }
+
+//   return (
+//     <div>
+//       <table>
+//         <thead>
+//           <tr>
+//             {/* some table headers */}
+//           </tr>
+//         </thead>
+//         <tbody>
+//           {data.map((row) => (
+//             <tr
+//               key={row.id}
+//               // pass the callback function to the onRowClicked prop
+//               onRowClicked={(e) => handleRowClick(row, e)}
+//             >
+//               {/* some table cells */}
+//             </tr>
+//           ))}
+//         </tbody>
+//       </table>
+//       {selectedRow && (
+//         // show an alert with the selected row data
+//         <CAlert color="primary">
+//           You selected row with id: {selectedRow.id}
+//         </CAlert>
+//       )}
+//     </div>
+//   )
+// }
+
+// export default TableExample
