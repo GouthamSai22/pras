@@ -112,52 +112,51 @@ class DBCollectedPackage(Base):
 
 class FilterStategy(ABC):
     @abstractmethod
-    def apply_filter(self, query: Session, filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> Session:
+    def apply_filter(self, packages: List["Package"], filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> List["Package"]:
         pass
 
 class PackageNumberFilter(FilterStategy):
-    def apply_filter(self, query: Session, filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> Session:
+    def apply_filter(self, packages: List["Package"], filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> List["Package"]:
         if filter_value:
-            query = query.filter(DBPackage.package_number.contains(filter_value))
-        return query
+            packages = [package for package in packages if filter_value.lower() in package.package_number or package.package_number in filter_value.lower()]
     
 class PackageTypeFilter(FilterStategy):
-    def apply_filter(self, query: Session, filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> Session:
+    def apply_filter(self, packages: List["Package"], filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> List["Package"]:
         if filter_value:
-            query = query.filter(DBPackage.package_type == filter_value)
-        return query
+            packages = [package for package in packages if package.package_type == filter_value]
+        return packages
     
 class OwnerNameFilter(FilterStategy):
-    def apply_filter(self, query: Session, filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> Session:
+    def apply_filter(self, packages: List["Package"], filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> List["Package"]:
         if filter_value:
-            query = query.filter(DBPackage.owner_name == filter_value)
-        return query
+            packages = [package for package in packages if filter_value.lower() in package.owner_name or package.owner_name in filter_value.lower()]
+        return packages
 
 class ArrivalFilter(FilterStategy):
-    def apply_filter(self, query: Session, filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> Session:
+    def apply_filter(self, packages: List["Package"], filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> List["Package"]:
         if from_date and to_date:
-            query = query.filter(and_(DBPackage.arrival >= from_date, DBPackage.arrival <= to_date))
+            packages = [package for package in packages if from_date <= package.arrival <= to_date]
         elif from_date:
-            query = query.filter(DBPackage.arrival >= from_date)
+            packages = [package for package in packages if package.arrival >= from_date]
         elif to_date:
-            query = query.filter(DBPackage.arrival <= to_date)
-        return query
+            packages = [package for package in packages if package.arrival <= to_date]
+        return packages
     
 class CollectedByEmailFilter(FilterStategy):
-    def apply_filter(self, query: Session, filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> Session:
+    def apply_filter(self, packages: List["Package"], filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> List["Package"]:
         if filter_value:
-            query = query.join(DBCollectedPackage).filter(DBCollectedPackage.collected_by_email == filter_value)
-        return query
+            packages = [package for package in packages if package.collected_by_email == filter_value.lower()]
+        return packages
 
 class CollectionTimeFilter(FilterStategy):
-    def apply_filter(self, query: Session, filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> Session:
+    def apply_filter(self, packages: List["Package"], filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> List["Package"]:
         if from_date and to_date:
-            query = query.join(DBCollectedPackage).filter(and_(DBCollectedPackage.collection_time >= from_date, DBCollectedPackage.collection_time <= to_date))
+            packages = [package for package in packages if from_date <= package.collection_time <= to_date]
         elif from_date:
-            query = query.join(DBCollectedPackage).filter(DBCollectedPackage.collection_time >= from_date)
+            packages = [package for package in packages if package.collection_time >= from_date]
         elif to_date:
-            query = query.join(DBCollectedPackage).filter(DBCollectedPackage.collection_time <= to_date)
-        return query
+            packages = [package for package in packages if package.collection_time <= to_date]
+        return packages
 
 class UserRole(str, Enum):
     ADMIN = "admin"
@@ -212,25 +211,10 @@ class User(BaseModel):
         elif package.get_status() == 2:
             send_email(package.owner_name, package.package_number, [package.observer.email], "collection", package.observer.email)
             
-    def search_uncollected_packages(self, db: Session, filter_by: Dict[str, Optional[Union[str, datetime]]] = {}):
-        filters = {
-            "package_number": PackageNumberFilter(),
-            "owner_name": OwnerNameFilter(),
-            "package_type": PackageTypeFilter(),
-            "arrival": ArrivalFilter(),
-        }
-        query = db.query(DBPackage).filter(DBPackage.status == 1)
-        for key, value in filter_by.items():
-            if value is None:
-                continue
-
-            if key == "arrival":
-                from_date, to_date = value
-                query = filters[key].apply_filter(query, None, from_date, to_date)
-            else:
-                query = filters[key].apply_filter(query, value, None, None)
-        
-        return query.all()
+    def filter_all_packages(self, db: Session, filter_strategy: FilterStategy, filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> List["Package"]:
+        result = User.get_all_packages(db)
+        result = filter_strategy.apply_filter(result, filter_value, from_date, to_date)
+        return result
         
 class Student(User):
     @classmethod
@@ -306,12 +290,23 @@ class Package(BaseModel):
         db.refresh(db_package)
         return cls.from_orm(db_package)
     
-    @classmethod
-    def delete_package(cls, db: Session) -> None:
-        db_package = db.query(DBPackage).filter(DBPackage.package_id == cls.package_id).first()
+    
+    def modify_package(self, db: Session, details: dict) -> "Package":
+        db_package = db.query(DBPackage).filter(DBPackage.package_id == self.package_id).first()
         if not db_package:
             return None
-        db_collected_package = db.query(DBCollectedPackage).filter(DBCollectedPackage.collected_package_id == cls.package_id).first()
+        for key, value in details.items():
+            setattr(db_package, key, value)
+        db.commit()
+        db.refresh(db_package)
+        return self.from_orm(db_package)
+    
+    
+    def delete_package(self, db: Session) -> None:
+        db_package = db.query(DBPackage).filter(DBPackage.package_id == self.package_id).first()
+        if not db_package:
+            return None
+        db_collected_package = db.query(DBCollectedPackage).filter(DBCollectedPackage.collected_package_id == self.package_id).first()
         if db_collected_package:
             db.delete(db_collected_package)
         db.delete(db_package)
@@ -556,7 +551,6 @@ async def collect_package(request: Request, db: Session = Depends(get_db)):
     if roll["roll_number"] == "":
         return {"result": "roll number not detected"}
     collected_email = roll["roll_number"].lower() + "@iith.ac.in"
-    print(collected_email)
     user = User.get_by_email(db, collected_email)
 
     if user:
@@ -588,6 +582,18 @@ async def delete_package(request: Request, db: Session = Depends(get_db)):
     if not package_object:
         return {"result": "package not found"}
     response = package_object.delete_package(db)
+    if not response:
+        return {"result": "package not found"}
+    return {"result": "success"}
+
+@app.patch("/modify-package")
+async def modify_package(request: Request, db: Session = Depends(get_db)):
+    body = await request.json()
+    package_id = body["package_id"]
+    package_object = Package.get_by_id(db, package_id)
+    if not package_object:
+        return {"result": "package not found"}
+    response = package_object.modify_package(db, body)
     if not response:
         return {"result": "package not found"}
     return {"result": "success"}
