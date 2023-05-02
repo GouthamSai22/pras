@@ -47,12 +47,15 @@ const barcodescanner = () => {
   const [postDetails, setPostDetails] = useState(pkg.package_number);
   const [packageStatus, setpackageStatus] = useState(pkg.status);
 
+  // const isAdmin = false;
+  const isAdmin = localStorage.getItem("isAdmin");
+
   return (
-    <CCardGroup>
+    isAdmin && <CCardGroup>
       <CCard>
         <CCardBody className="text-left">
           <CForm className="parcel-search-container">
-            <h1>Package Details</h1>
+            <h1> Package Details </h1>{" "}
             <CCol md={6}>
               <CFormInput
                 id="serialNumber"
@@ -61,7 +64,7 @@ const barcodescanner = () => {
                 label="Package Number"
                 readOnly
               />
-            </CCol>
+            </CCol>{" "}
             <CCol md={6}>
               <CFormInput
                 id="arrivalDate"
@@ -71,8 +74,8 @@ const barcodescanner = () => {
                 onChange={(e) => {
                   setArrivalDate(e.target.value); // update the state variable when the input changes
                 }}
-              />
-            </CCol>
+              />{" "}
+            </CCol>{" "}
             <CCol md={6}>
               <CFormInput
                 id="studentName"
@@ -82,28 +85,24 @@ const barcodescanner = () => {
                 onChange={(e) => {
                   setStudentName(e.target.value); // update the state variable when the input changes
                 }}
-              />
-            </CCol>
+              />{" "}
+            </CCol>{" "}
             <CCol md={4}>
               <CFormSelect
                 id="inputState"
                 label="Parcel Type"
                 defaultValue={parcelType}
               >
-                <option>Choose Type</option>
-                <option>Amazon</option>
-                <option>Flipkart</option>
-                <option>Myntra</option>
-                <option>Nykaa</option>
-                <option>BlueDart</option>
-                <option>Amazon</option>
-                <option>Speed Post</option>
-                onChange=
+                <option> Choose Type </option> <option> Amazon </option>{" "}
+                <option> Flipkart </option> <option> Myntra </option>{" "}
+                <option> Nykaa </option> <option> BlueDart </option>{" "}
+                <option> Amazon </option> <option> Speed Post </option>
+                onChange ={" "}
                 {(e) => {
                   setParcelType(e.target.value); // update the state variable when the input changes
-                }}
-              </CFormSelect>
-            </CCol>
+                }}{" "}
+              </CFormSelect>{" "}
+            </CCol>{" "}
             <CCol md={6}>
               <CFormInput
                 label="Parcel Number"
@@ -113,8 +112,8 @@ const barcodescanner = () => {
                 onChange={(e) => {
                   setPostDetails(e.target.value); // update the state variable when the input changes
                 }}
-              />
-            </CCol>
+              />{" "}
+            </CCol>{" "}
             <CCol md={6}>
               <CFormInput
                 label="Collection Status"
@@ -129,43 +128,43 @@ const barcodescanner = () => {
                 type="text"
                 readOnly
               />
-            </CCol>
+            </CCol>{" "}
             <CCol xs={12}>
+              {" "}
               {/* <CButton
-              type="submit"
-              onClick={() => {
-                fetch("http://localhost:8000/add-package", {
-                  method: "POST",
-                  headers: {
-                    // Authorization: credentialResponse.credential,
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    package_number: postDetails,
-                    package_type: parcelType,
-                    owner_name: studentName,
-                  }),
-                })
-                  .then((res) => res.json())
-                  .then((data) => {
-                    if (data["result"] === "success") {
-                      <CAlert color="primary">Data added succesfully!</CAlert>;
-                    } else {
-                      <CAlert color="primary">Error adding data!</CAlert>;
-                    }
-                  })
-                  .catch((err) => {
-                    console.log(err);
-                  });
-              }}
-            >
-              Add Package
-            </CButton> */}
-
+                          type="submit"
+                          onClick={() => {
+                            fetch("http://localhost:8000/add-package", {
+                              method: "POST",
+                              headers: {
+                                // Authorization: credentialResponse.credential,
+                                "Content-Type": "application/json",
+                              },
+                              body: JSON.stringify({
+                                package_number: postDetails,
+                                package_type: parcelType,
+                                owner_name: studentName,
+                              }),
+                            })
+                              .then((res) => res.json())
+                              .then((data) => {
+                                if (data["result"] === "success") {
+                                  <CAlert color="primary">Data added succesfully!</CAlert>;
+                                } else {
+                                  <CAlert color="primary">Error adding data!</CAlert>;
+                                }
+                              })
+                              .catch((err) => {
+                                console.log(err);
+                              });
+                          }}
+                        >
+                          Add Package
+                        </CButton> */}
               <CButton
                 onClick={() => {
                   fetch("http://localhost:8000/modify-package", {
-                    method: "POST",
+                    method: "BATCH",
                     headers: {
                       // Authorization: credentialResponse.credential,
                       "Content-Type": "application/json",
@@ -187,12 +186,12 @@ const barcodescanner = () => {
                     });
                 }}
               >
-                Modify
-              </CButton>
+                Modify{" "}
+              </CButton>{" "}
               <CButton
                 onClick={() => {
                   fetch("http://localhost:8000/delete-package", {
-                    method: "POST",
+                    method: "DELETE",
                     headers: {
                       // Authorization: credentialResponse.credential,
                       "Content-Type": "application/json",
@@ -210,14 +209,15 @@ const barcodescanner = () => {
                     });
                 }}
               >
-                Delete
-              </CButton>
-            </CCol>
-          </CForm>
-        </CCardBody>
-      </CCard>
+                Delete{" "}
+              </CButton>{" "}
+            </CCol>{" "}
+          </CForm>{" "}
+        </CCardBody>{" "}
+      </CCard>{" "}
       {packageStatus === 1 ? (
         <CCard>
+          {" "}
           {picture == "" ? (
             <CCard className="p-4">
               <CRow>
@@ -228,8 +228,8 @@ const barcodescanner = () => {
                   width={400}
                   screenshotFormat="image/jpeg"
                   videoConstraints={videoConstraints}
-                />
-              </CRow>
+                />{" "}
+              </CRow>{" "}
               <CRow className="justify-content-center">
                 <CButton
                   onClick={(e) => {
@@ -239,15 +239,15 @@ const barcodescanner = () => {
                   color="danger"
                   size="sm"
                 >
-                  Capture
-                </CButton>
-              </CRow>
+                  Capture{" "}
+                </CButton>{" "}
+              </CRow>{" "}
             </CCard>
           ) : (
             <CCard className="p-4">
               <center>
                 <img src={picture} height="80%" width="70%" />
-              </center>
+              </center>{" "}
               <CRow className="justify-content-center">
                 <CCol className="justify-content-center">
                   <CButton
@@ -257,38 +257,41 @@ const barcodescanner = () => {
                     }}
                     color="primary"
                   >
-                    Retake
-                  </CButton>
-                </CCol>
+                    Retake{" "}
+                  </CButton>{" "}
+                </CCol>{" "}
                 <CCol>
                   <CButton
                     onClick={async () => {
-                      const res = await fetch("http://localhost:8000/collect-package", {
-                        method: "POST",
-                        headers: {
-                          // Authorization: credentialResponse.credential,
-                          "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({
-                          pic: picture,
-                          package_id: serialNumber,
-                        }),
-                      });
+                      const res = await fetch(
+                        "http://localhost:8000/collect-package",
+                        {
+                          method: "POST",
+                          headers: {
+                            // Authorization: credentialResponse.credential,
+                            "Content-Type": "application/json",
+                          },
+                          body: JSON.stringify({
+                            pic: picture,
+                            package_id: serialNumber,
+                          }),
+                        }
+                      );
                       data = await res.json();
                       console.log(data["result"]);
                     }}
                     color="primary"
                   >
-                    Proceed
-                  </CButton>
-                </CCol>
-              </CRow>
+                    Proceed{" "}
+                  </CButton>{" "}
+                </CCol>{" "}
+              </CRow>{" "}
             </CCard>
-          )}
+          )}{" "}
         </CCard>
       ) : (
-        <></>
-      )}
+        <> </>
+      )}{" "}
     </CCardGroup>
   );
 };

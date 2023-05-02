@@ -51,8 +51,11 @@ const Camera = () => {
     console.log(`Parcel type: ${parcelType}`);
     console.log(`Post details: ${postDetails}`);
   };
+  // const isAdmin = false;
+  const isAdmin = localStorage.getItem("isAdmin");
+  
   return (
-    <CContainer>
+    isAdmin && <CContainer>
       <CCardGroup>
         {picture == "" ? (
           <CCard className="p-4">
