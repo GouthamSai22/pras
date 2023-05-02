@@ -112,50 +112,55 @@ class DBCollectedPackage(Base):
 
 class FilterStategy(ABC):
     @abstractmethod
-    def apply_filter(self, packages: List["Package"], filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> List["Package"]:
+    def apply_filter(self, packages: List["Package"], filter_value: Union[str, int, datetime]) -> List["Package"]:
         pass
 
 class PackageNumberFilter(FilterStategy):
-    def apply_filter(self, packages: List["Package"], filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> List["Package"]:
+    def apply_filter(self, packages: List["Package"], filter_value: Union[str, int, datetime]) -> List["Package"]:
         if filter_value:
             packages = [package for package in packages if filter_value.lower() in package.package_number or package.package_number in filter_value.lower()]
+        return packages
     
 class PackageTypeFilter(FilterStategy):
-    def apply_filter(self, packages: List["Package"], filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> List["Package"]:
+    def apply_filter(self, packages: List["Package"], filter_value: Union[str, int, datetime]) -> List["Package"]:
         if filter_value:
             packages = [package for package in packages if package.package_type == filter_value]
         return packages
-    
+
+class StatusFilter(FilterStategy):
+    def apply_filter(self, packages: List["Package"], filter_value: Union[str, int, datetime]) -> List["Package"]:
+        if filter_value:
+            packages = [package for package in packages if package.status == filter_value]
+        return packages
+
 class OwnerNameFilter(FilterStategy):
-    def apply_filter(self, packages: List["Package"], filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> List["Package"]:
+    def apply_filter(self, packages: List["Package"], filter_value: Union[str, int, datetime]) -> List["Package"]:
         if filter_value:
             packages = [package for package in packages if filter_value.lower() in package.owner_name or package.owner_name in filter_value.lower()]
         return packages
 
 class ArrivalFilter(FilterStategy):
-    def apply_filter(self, packages: List["Package"], filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> List["Package"]:
-        if from_date and to_date:
-            packages = [package for package in packages if from_date <= package.arrival <= to_date]
-        elif from_date:
-            packages = [package for package in packages if package.arrival >= from_date]
-        elif to_date:
-            packages = [package for package in packages if package.arrival <= to_date]
+    def apply_filter(self, packages: List["Package"], filter_value: Union[str, int, datetime]) -> List["Package"]:
+        if filter_value:
+            selected_date = datetime.strptime(filter_value, "%Y-%m-%d").date()
+            start_time = datetime.combine(selected_date, datetime.min.time())
+            end_time = datetime.combine(selected_date, datetime.max.time())
+            packages = [package for package in packages if start_time <= package.arrival <= end_time]    
         return packages
     
 class CollectedByEmailFilter(FilterStategy):
-    def apply_filter(self, packages: List["Package"], filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> List["Package"]:
+    def apply_filter(self, packages: List["Package"], filter_value: Union[str, int, datetime]) -> List["Package"]:
         if filter_value:
             packages = [package for package in packages if package.collected_by_email == filter_value.lower()]
         return packages
 
 class CollectionTimeFilter(FilterStategy):
-    def apply_filter(self, packages: List["Package"], filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> List["Package"]:
-        if from_date and to_date:
-            packages = [package for package in packages if from_date <= package.collection_time <= to_date]
-        elif from_date:
-            packages = [package for package in packages if package.collection_time >= from_date]
-        elif to_date:
-            packages = [package for package in packages if package.collection_time <= to_date]
+    def apply_filter(self, packages: List["Package"], filter_value: Union[str, int, datetime]) -> List["Package"]:
+        if filter_value:
+            selected_date = datetime.strptime(filter_value, "%Y-%m-%d").date()
+            start_time = datetime.combine(selected_date, datetime.min.time())
+            end_time = datetime.combine(selected_date, datetime.max.time())
+            packages = [package for package in packages if start_time <= package.collection_time <= end_time]    
         return packages
 
 class UserRole(str, Enum):
@@ -212,9 +217,9 @@ class User(BaseModel):
             send_email(package.owner_name, package.package_number, [package.observer.email], "collection", package.observer.email)
 
     @classmethod      
-    def filter_all_packages(cls, db: Session, filter_strategy: FilterStategy, filter_value: Optional[str], from_date: Optional[datetime], to_date: Optional[datetime]) -> List["Package"]:
+    def filter_all_packages(cls, db: Session, filter_strategy: FilterStategy, filter_value: Union[str, int, datetime]) -> List["Package"]:
         result = User.get_all_packages(db)
-        result = filter_strategy.apply_filter(result, filter_value, from_date, to_date)
+        result = filter_strategy.apply_filter(result, filter_value)
         return result
         
 class Student(User):
@@ -543,9 +548,7 @@ async def filter_packages(request: Request, db: Session = Depends(get_db)):
                "collection_time": CollectionTimeFilter()}
     filter_applied = filters[body["filter"]]
     filter_value = body["value"]
-    from_date = body["from_date"]
-    to_date = body["to_date"]
-    packages = User.filter_all_packages(db=db, filter_strategy=filter_applied, filter_value=filter_value, from_date=from_date, to_date=to_date)
+    packages = User.filter_all_packages(db=db, filter_strategy=filter_applied, filter_value=filter_value)
     return packages
 
 @app.post("/add-package")
