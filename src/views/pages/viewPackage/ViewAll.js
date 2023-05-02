@@ -44,6 +44,7 @@ function viewAll() {
     const [studentName, setStudentName] = useState(rowData.owner_name);
     const [parcelType, setParcelType] = useState(rowData.package_type);
     const [postDetails, setPostDetails] = useState(rowData.package_number);
+
     return (
       <CModal
         alignment="center"
@@ -52,15 +53,14 @@ function viewAll() {
         onClose={() => setEditVisible(false)}
       >
         <CModalHeader>
-          <CModalTitle>Edit Package Details</CModalTitle>
-        </CModalHeader>
+          <CModalTitle> Edit Package Details </CModalTitle>{" "}
+        </CModalHeader>{" "}
         <CModalBody>
-          <p>Edit Details</p>
+          <p> Edit Details </p>{" "}
           <CCard>
             <CCardBody className="text-left">
               <CForm className="parcel-search-container">
-                <h1>Add Package Details</h1>
-
+                <h1> Add Package Details </h1>
                 <CCol md={6}>
                   <CFormInput
                     id="arrivalDate"
@@ -69,7 +69,7 @@ function viewAll() {
                     label="Arrival Date"
                     readOnly
                   />
-                </CCol>
+                </CCol>{" "}
                 <CCol md={6}>
                   <CFormInput
                     id="studentName"
@@ -79,28 +79,24 @@ function viewAll() {
                     onChange={(e) => {
                       setStudentName(e.target.value); // update the state variable when the input changes
                     }}
-                  />
-                </CCol>
+                  />{" "}
+                </CCol>{" "}
                 <CCol md={4}>
                   <CFormSelect
                     id="inputState"
                     label="Parcel Type"
                     value={parcelType}
                   >
-                    <option>Choose Type</option>
-                    <option>Amazon</option>
-                    <option>Flipkart</option>
-                    <option>Myntra</option>
-                    <option>Nykaa</option>
-                    <option>BlueDart</option>
-                    <option>Amazon</option>
-                    <option>Speed Post</option>
-                    onChange=
+                    <option> Choose Type </option> <option> Amazon </option>{" "}
+                    <option> Flipkart </option> <option> Myntra </option>{" "}
+                    <option> Nykaa </option> <option> BlueDart </option>{" "}
+                    <option> Amazon </option> <option> Speed Post </option>
+                    onChange ={" "}
                     {(e) => {
                       setParcelType(e.target.value); // update the state variable when the input changes
-                    }}
-                  </CFormSelect>
-                </CCol>
+                    }}{" "}
+                  </CFormSelect>{" "}
+                </CCol>{" "}
                 <CCol md={6}>
                   <CFormInput
                     label="Parcel Number"
@@ -110,8 +106,8 @@ function viewAll() {
                     onChange={(e) => {
                       setPostDetails(e.target.value); // update the state variable when the input changes
                     }}
-                  />
-                </CCol>
+                  />{" "}
+                </CCol>{" "}
                 <CCol xs={12}>
                   <CButton
                     type="submit"
@@ -131,22 +127,21 @@ function viewAll() {
                       console.log(postDetails);
                     }}
                   >
-                    Add Package
-                  </CButton>
-                </CCol>
-              </CForm>
-            </CCardBody>
-          </CCard>
-        </CModalBody>
+                    Add Package{" "}
+                  </CButton>{" "}
+                </CCol>{" "}
+              </CForm>{" "}
+            </CCardBody>{" "}
+          </CCard>{" "}
+        </CModalBody>{" "}
         <CModalFooter>
           <CButton color="secondary" onClick={() => setEditVisible(false)}>
-            Cancel
+            Cancel{" "}
           </CButton>
-
           <CButton color="primary" onClick={() => setEditVisible(false)}>
-            Save
-          </CButton>
-        </CModalFooter>
+            Save{" "}
+          </CButton>{" "}
+        </CModalFooter>{" "}
       </CModal>
     );
   }
@@ -204,40 +199,38 @@ function viewAll() {
       observer: null,
     },
   ];
+  
+  // const isAdmin = false;
+  const isAdmin = localStorage.getItem("isAdmin");
+
 
   return (
     <div className="package-table">
-      <h1>Uncollected Package Table</h1>
+      <h1> View All Packages </h1>{" "}
       <table>
         <thead>
           <tr>
-            <th>S.No</th>
-            <th>Date of Arrival</th>
-            <th>Name of Owner</th>
-            <th>Package Number</th>
-            <th>Type of Parcel</th>
-            <th>Status</th>
-            <th></th>
-            <th></th>
-            <th></th>
-          </tr>
-        </thead>
+            <th> S.No </th> <th> Date of Arrival </th> <th> Name of Owner </th>{" "}
+            <th> Package Number </th> <th> Type of Parcel </th>{" "}
+            <th> Status </th> <th> </th> <th> </th> <th> </th>{" "}
+          </tr>{" "}
+        </thead>{" "}
         <tbody>
+          {" "}
           {packages.map((pkg, index) => (
             <tr key={index + 1}>
-              <td>{pkg.package_id}</td>
-              <td>{pkg.arrival.slice(0, 10)}</td>
-              <td>{pkg.owner_name}</td>
-              <td>{pkg.package_number}</td>
-              <td>{pkg.package_type}</td>
+              <td> {pkg.package_id} </td> <td> {pkg.arrival.slice(0, 10)} </td>{" "}
+              <td> {pkg.owner_name} </td> <td> {pkg.package_number} </td>{" "}
+              <td> {pkg.package_type} </td>{" "}
               <td>
+                {" "}
                 {pkg.status === 2
                   ? "Collected"
                   : pkg.status === 1
                   ? "Uncollected"
-                  : "Expected"}
-              </td>
-              <td>
+                  : "Expected"}{" "}
+              </td>{" "}
+              {isAdmin && <td>
                 <CNavLink to="/barcode" component={NavLink}>
                   <CButton
                     onClick={() => {
@@ -246,178 +239,14 @@ function viewAll() {
                       // console.log(localStorage.getItem("curr_row"));
                     }}
                   >
-                    <CIcon icon={cilPencil} />
-                  </CButton>
-                </CNavLink>
-              </td>
-              {/* <td>
-                <CTooltip content="Collect" placement="bottom">
-                  <CButton
-                    color="light"
-                    onClick={() => setCollectVisible(!collectVisible)}
-                  >
-                    <CIcon icon={cilBarcode}></CIcon>
-                    <CModal
-                      alignment="center"
-                      scrollable
-                      visible={collectVisible}
-                      onClose={() => setCollectVisible(false)}
-                    >
-                      <CModalHeader>
-                        <CModalTitle>ID Card Scanner</CModalTitle>
-                      </CModalHeader>
-                      <CModalBody>
-                        <p>Scan ID</p>
-                        <CContainer>
-                          {picture == "" ? (
-                            <>
-                              <CRow>
-                                <Webcam
-                                  audio={false}
-                                  height={400}
-                                  ref={webcamRef}
-                                  width={400}
-                                  screenshotFormat="image/jpeg"
-                                  videoConstraints={videoConstraints}
-                                />
-                              </CRow>
-                              <CRow>
-                                <CButton
-                                  color="primary"
-                                  shape="rounded-pill"
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    capture();
-                                  }}
-                                >
-                                  Capture
-                                </CButton>
-                              </CRow>
-                            </>
-                          ) : (
-                            <CCard className="p-4">
-                              <center>
-                                <img src={picture} height={400} width={400} />
-                              </center>
-                              <CRow className="justify-content-center">
-                                <CCol className="justify-content-center">
-                                  <CButton
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      setPicture("");
-                                    }}
-                                    color="primary"
-                                  >
-                                    Retake
-                                  </CButton>
-                                </CCol>
-                                <CCol>
-                                  <CButton
-                                    onClick={async () => {
-                                      const res = await fetch(
-                                        "http://localhost:8000/camera",
-                                        {
-                                          method: "POST",
-                                          headers: {
-                                            // Authorization: credentialResponse.credential,
-                                            "Content-Type": "application/json",
-                                          },
-                                          body: JSON.stringify({
-                                            pic: picture,
-                                          }),
-                                        }
-                                      );
-                                      // .then((res) => res.json())
-                                      data = await res.json();
-                                      // .then((data) => {
-                                      setStudentName(data[owner_name]);
-                                      setPostDetails(data[package_number]);
-                                      // });
-                                    }}
-                                    color="primary"
-                                  >
-                                    Proceed
-                                  </CButton>
-                                </CCol>
-                              </CRow>
-                            </CCard>
-                          )}
-                        </CContainer>
-                      </CModalBody>
-                      <CModalFooter>
-                        <CButton
-                          color="secondary"
-                          onClick={() => setCollectVisible(false)}
-                        >
-                          Cancel
-                        </CButton>
-
-                        <CButton
-                          color="primary"
-                          onClick={() => setCollectVisible(false)}
-                        >
-                          Save
-                        </CButton>
-                      </CModalFooter>
-                    </CModal>
-                  </CButton>
-                </CTooltip>
-              </td>
-              <td>
-                <CTooltip content="Edit" placement="bottom">
-                  <CButton
-                    color="light"
-                    onClick={() => {
-                      localStorage.setItem("curr_row", JSON.stringify(pkg));
-                      handleEditClick();
-                    }}
-                  >
-                    <CIcon icon={cilPencil}></CIcon>
-                  </CButton>
-                </CTooltip>
-              </td>
-              <td>
-                <CTooltip content="Delete" placement="bottom">
-                  <CButton
-                    color="light"
-                    onClick={() => setDeleteVisible(!deleteVisible)}
-                  >
-                    <CIcon icon={cilTrash}></CIcon>
-                    <CModal
-                      alignment="center"
-                      scrollable
-                      visible={deleteVisible}
-                      onClose={() => setDeleteVisible(false)}
-                    >
-                      <CModalHeader>
-                        <CModalTitle>Delete Entry</CModalTitle>
-                      </CModalHeader>
-                      <CModalBody>
-                        <p>Are you sure you want to delete this entry?</p>
-                      </CModalBody>
-                      <CModalFooter>
-                        <CButton
-                          color="secondary"
-                          onClick={() => setDeleteVisible(false)}
-                        >
-                          Cancel
-                        </CButton>
-
-                        <CButton
-                          color="primary"
-                          onClick={() => setDeleteVisible(false)}
-                        >
-                          Delete
-                        </CButton>
-                      </CModalFooter>
-                    </CModal>
-                  </CButton>
-                </CTooltip>
-              </td> */}
+                    <CIcon icon={cilPencil} />{" "}
+                  </CButton>{" "}
+                </CNavLink>{" "}
+              </td>}{" "}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          ))}{" "}
+        </tbody>{" "}
+      </table>{" "}
     </div>
   );
 }

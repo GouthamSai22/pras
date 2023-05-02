@@ -14,6 +14,21 @@ import {
 } from "@coreui/react";
 
 function viewCollected({}) {
+  //modals
+  const [collectVisible, setCollectVisible] = useState(false);
+  const [deleteVisible, setDeleteVisible] = useState(false);
+  
+  // row specific
+  const [deletePkg, setDeletePkg] = useState([]);
+  const [selectedDelRow, setSelectedDelRow] = useState(null);
+
+  // const [delAlertVisible, setDelAlertVisible] = useState(false);
+
+
+  const handleDeleteModalSubmit = (modifiedData) => {
+    console.log("sel:", selectedDelRow.id);
+    setDeletePkg(selectedDelRow);
+    console.log("del:", deletePkg.id);
   const [collectVisible, setCollectVisible] = useState(false);
 
   const [deleteVisible, setDeleteVisible] = useState(false);
@@ -58,11 +73,13 @@ function viewCollected({}) {
     setDeleteVisible(false);
     console.log("modal submit");
 
+    // setDeletePkg((prevData) =>
     // setDeletePkgID((prevData) =>
     //   prevData.map((row) => {
     //     row.id === selectedDelRow.id ? { ...row, ...modifiedData } : row;
     //   })
     // );
+  };
   }
 
   const handleRemove = (e) => {
@@ -77,6 +94,7 @@ function viewCollected({}) {
     // {
     //   console.log(e);
     //   console.log(parentButton);
+    //   setDeletePkg(e);
     //   setDeletePkgID(e);
     // }
     // else
