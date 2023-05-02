@@ -29,123 +29,6 @@ const videoConstraints = {
   facingMode: "user",
 };
 
-function create_edit_modal(pkg) {
-  const [editVisible, setEditVisible] = useState(false);
-  return (
-    <>
-      <CTooltip content="Edit" placement="bottom">
-        <CButton color="light" onClick={() => setEditVisible(!editVisible)}>
-          <CIcon icon={cilPencil}></CIcon>
-        </CButton>
-      </CTooltip>
-      <CModal
-        alignment="center"
-        scrollable
-        visible={editVisible}
-        onClose={() => setEditVisible(false)}
-      >
-        <CModalHeader>
-          <CModalTitle>Edit Package Details</CModalTitle>
-        </CModalHeader>
-        <CModalBody>
-          <p>Edit Details</p>
-          <CCard>
-            <CCardBody className="text-left">
-              <CForm className="parcel-search-container">
-                <h1>Add Package Details</h1>
-
-                <CCol md={6}>
-                  <CFormInput
-                    id="arrivalDate"
-                    type="date"
-                    value={pkg.pickupDate}
-                    label="Arrival Date"
-                    readOnly
-                  />
-                </CCol>
-                <CCol md={6}>
-                  <CFormInput
-                    placeholder="Student Name"
-                    id="studentName"
-                    label="Student Name"
-                    value={pkg.owner_name}
-                    type="text"
-                    onChange={(e) => {
-                      setStudentName(e.target.value); // update the state variable when the input changes
-                    }}
-                  />
-                </CCol>
-                <CCol md={4}>
-                  <CFormSelect
-                    id="inputState"
-                    label="Parcel Type"
-                    value={pkg.parcelType}
-                  >
-                    <option>Choose Type</option>
-                    <option>Amazon</option>
-                    <option>Flipkart</option>
-                    <option>Myntra</option>
-                    <option>Nykaa</option>
-                    <option>BlueDart</option>
-                    <option>Amazon</option>
-                    <option>Speed Post</option>
-                    onChange=
-                    {(e) => {
-                      setParcelType(e.target.value); // update the state variable when the input changes
-                    }}
-                  </CFormSelect>
-                </CCol>
-                <CCol md={6}>
-                  <CFormInput
-                    placeholder="E.g.: 34429554513900"
-                    label="Parcel Number"
-                    value={pkg.postDetails}
-                    id="postDetails"
-                    type="text"
-                    onChange={(e) => {
-                      setPostDetails(e.target.value); // update the state variable when the input changes
-                    }}
-                  />
-                </CCol>
-                <CCol xs={12}>
-                  <CButton
-                    type="submit"
-                    onClick={() => {
-                      fetch("http://localhost:8000/add-package", {
-                        method: "POST",
-                        headers: {
-                          // Authorization: credentialResponse.credential,
-                          "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({
-                          package_number: postDetails,
-                          package_type: parcelType,
-                          owner_name: studentName,
-                        }),
-                      });
-                    }}
-                  >
-                    Add Package
-                  </CButton>
-                </CCol>
-              </CForm>
-            </CCardBody>
-          </CCard>
-        </CModalBody>
-        <CModalFooter>
-          <CButton color="secondary" onClick={() => setEditVisible(false)}>
-            Cancel
-          </CButton>
-
-          <CButton color="primary" onClick={() => setEditVisible(false)}>
-            Save
-          </CButton>
-        </CModalFooter>
-      </CModal>
-    </>
-  );
-}
-
 function viewUnCollected({}) {
   const [arrivalDate, setArrivalDate] = useState("");
   const [studentName, setStudentName] = useState("");
@@ -168,6 +51,7 @@ function viewUnCollected({}) {
     console.log(typeof localStorage.getItem("capturedImage"));
   });
   const [collectVisible, setCollectVisible] = useState(false);
+  const [editVisible, setEditVisible] = useState(false);
   const [deleteVisible, setDeleteVisible] = useState(false);
 
   const [delAlertVisible, setDelAlertVisible] = useState(false);
@@ -272,7 +156,125 @@ function viewUnCollected({}) {
                 </CTooltip>
               </td>
               <td>
-                {create_edit_modal(pkg)}
+                <CTooltip content="Edit" placement="bottom">
+                  <CButton
+                    color="light"
+                    onClick={() => setEditVisible(!editVisible)}
+                  >
+                    <CIcon icon={cilPencil}></CIcon>
+                  </CButton>
+                </CTooltip>
+                <CModal
+                  alignment="center"
+                  scrollable
+                  visible={editVisible}
+                  onClose={() => setEditVisible(false)}
+                >
+                  <CModalHeader>
+                    <CModalTitle>Edit Package Details</CModalTitle>
+                  </CModalHeader>
+                  <CModalBody>
+                    <p>Edit Details</p>
+                    <CCard>
+                      <CCardBody className="text-left">
+                        <CForm className="parcel-search-container">
+                          <h1>Add Package Details</h1>
+
+                          <CCol md={6}>
+                            <CFormInput
+                              id="arrivalDate"
+                              type="date"
+                              value={pkg.arrival}
+                              label="Arrival Date"
+                              readOnly
+                            />
+                          </CCol>
+                          <CCol md={6}>
+                            <CFormInput
+                              placeholder="Student Name"
+                              id="studentName"
+                              label="Student Name"
+                              value={pkg.owner_name}
+                              type="text"
+                              onChange={(e) => {
+                                setStudentName(e.target.value); // update the state variable when the input changes
+                              }}
+                            />
+                          </CCol>
+                          <CCol md={4}>
+                            <CFormSelect
+                              id="inputState"
+                              label="Parcel Type"
+                              value={pkg.package_type}
+                            >
+                              <option>Choose Type</option>
+                              <option>Amazon</option>
+                              <option>Flipkart</option>
+                              <option>Myntra</option>
+                              <option>Nykaa</option>
+                              <option>BlueDart</option>
+                              <option>Amazon</option>
+                              <option>Speed Post</option>
+                              onChange=
+                              {(e) => {
+                                setParcelType(e.target.value); // update the state variable when the input changes
+                              }}
+                            </CFormSelect>
+                          </CCol>
+                          <CCol md={6}>
+                            <CFormInput
+                              placeholder="E.g.: 34429554513900"
+                              label="Parcel Number"
+                              value={pkg.package_number}
+                              id="postDetails"
+                              type="text"
+                              onChange={(e) => {
+                                setPostDetails(e.target.value); // update the state variable when the input changes
+                              }}
+                            />
+                          </CCol>
+                          <CCol xs={12}>
+                            <CButton
+                              type="submit"
+                              onClick={() => {
+                                fetch("http://localhost:8000/edit-package", {
+                                  method: "POST",
+                                  headers: {
+                                    // Authorization: credentialResponse.credential,
+                                    "Content-Type": "application/json",
+                                  },
+                                  body: JSON.stringify({
+                                    package_number: postDetails,
+                                    package_type: parcelType,
+                                    owner_name: studentName,
+                                  }),
+                                });
+                                console.log(postDetails);
+                              }}
+                            >
+                              Add Package
+                            </CButton>
+                          </CCol>
+                        </CForm>
+                      </CCardBody>
+                    </CCard>
+                  </CModalBody>
+                  <CModalFooter>
+                    <CButton
+                      color="secondary"
+                      onClick={() => setEditVisible(false)}
+                    >
+                      Cancel
+                    </CButton>
+
+                    <CButton
+                      color="primary"
+                      onClick={() => setEditVisible(false)}
+                    >
+                      Save
+                    </CButton>
+                  </CModalFooter>
+                </CModal>
               </td>
               <td>
                 <CTooltip content="Delete" placement="bottom">
