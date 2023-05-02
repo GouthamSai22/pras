@@ -52,7 +52,7 @@ const Camera = () => {
     console.log(`Post details: ${postDetails}`);
   };
   // const isAdmin = false;
-  const isAdmin = localStorage.getItem("isAdmin");
+  const isAdmin = JSON.parse(localStorage.getItem("isAdmin"));
   
   return (
     isAdmin && <CContainer>

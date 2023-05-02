@@ -27,7 +27,7 @@ const AppHeader = () => {
   const sidebarShow = useSelector((state) => state.sidebarShow);
   
   // const isAdmin = false;
-  const isAdmin = localStorage.getItem("isAdmin");
+  const isAdmin = JSON.parse(localStorage.getItem("isAdmin"));
 
   return (
     <CHeader position="sticky" className="mb-4">

@@ -48,7 +48,7 @@ const barcodescanner = () => {
   const [packageStatus, setpackageStatus] = useState(pkg.status);
 
   // const isAdmin = false;
-  const isAdmin = localStorage.getItem("isAdmin");
+  const isAdmin = JSON.parse(localStorage.getItem("isAdmin"));
 
   return (
     isAdmin && <CCardGroup>
