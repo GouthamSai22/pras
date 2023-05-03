@@ -53,9 +53,9 @@ const Camera = () => {
   };
   // const isAdmin = false;
   const isAdmin = JSON.parse(localStorage.getItem("isAdmin"));
-  
-  return (
-    isAdmin && <CContainer>
+
+  return isAdmin ? (
+    <CContainer>
       <CCardGroup>
         {picture == "" ? (
           <CCard className="p-4">
@@ -222,6 +222,8 @@ const Camera = () => {
         </CCard>
       </CCardGroup>
     </CContainer>
+  ) : (
+    <></>
   );
 };
 export default Camera;

@@ -368,6 +368,15 @@ app.add_middleware(
 queries = aiosql.from_path("db", "psycopg2")
 
 def verify_auth_token(Authorization: str = Header()):
+    """
+    Verify the auth token and return the user's email, name and picture.
+    
+    Args:
+        Authorization (str, optional): The auth token. Defaults to Header().
+    
+    Returns:
+        dict: The user's email, name and picture.
+    """
     email, name, picture = authn_user(Authorization)
     if email is None:
         raise HTTPException(status_code=401, detail="Invalid token")
@@ -375,7 +384,20 @@ def verify_auth_token(Authorization: str = Header()):
             "name": name, 
             "picture": picture}
 
-def send_email(name, package_id, receiver_list, email_type, collected_by=None):
+def send_email(name: str, package_id: str, receiver_list: list, email_type: str, collected_by=None):
+    """
+    Send an email to the receiver list.
+    
+    Args:
+        name (str): The name of the package owner.
+        package_id (str): The package id.
+        receiver_list (list): The list of receivers.
+        email_type (str): The type of email to send.
+        collected_by (str, optional): The email of the person who collected the package. Defaults to None.
+    
+    Returns:
+        None
+    """
     gmail_user = os.getenv("GMAIL_USER")
     gmail_password = os.getenv("GMAIL_PASSWORD")
     receiver = ', '.join(receiver_list)
@@ -409,7 +431,15 @@ def send_email(name, package_id, receiver_list, email_type, collected_by=None):
     except Exception as err:
         print(err)
 
-def get_details_from_image(img):
+def get_details_from_image(img: Image):
+    """
+    Get the details from the image.
+    
+    Args:
+        img (Image): The image.
+    
+    Returns:
+        dict: The details (package number and owner name) extracted from the image."""
     text = pytesseract.image_to_string(img)
     barcodes = pyzbar.decode(img)
     barcodeData = ""
@@ -447,7 +477,15 @@ def get_details_from_image(img):
     
     return {"package_number": barcodeData, "owner_name": full_name}
 
-def get_roll_number_from_image(img):
+def get_roll_number_from_image(img: Image):
+    """
+    Get the roll number from the image.
+    
+    Args:
+        img (Image): The image.
+        
+    Returns:
+        dict: The roll number extracted from the image."""
     barcodes = pyzbar.decode(img)
     barcodeData = ""
     for barcode in barcodes:
