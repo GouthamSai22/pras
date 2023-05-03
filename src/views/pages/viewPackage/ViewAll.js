@@ -205,8 +205,9 @@ function viewAll() {
   //   },
   // ];
 
-  const isAdmin = true;
-  // const isAdmin = JSON.parse(localStorage.getItem("isAdmin"));
+  // const isAdmin = true;
+  localStorage.setItem("isAdmin", JSON.stringify(true));
+  const isAdmin = JSON.parse(localStorage.getItem("isAdmin"));
 
   function handleSearchClick() {
     fetch("http://localhost:8000/filter-packages", {
