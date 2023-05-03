@@ -559,6 +559,7 @@ async def get_details_from_camera(request: Request):
         f.write(img_bytes)
     img = Image.open("image.jpg").convert("L")
     details = get_details_from_image(img)
+    print(details)
     return details
 
 @app.post("/roll-number")

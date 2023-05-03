@@ -233,23 +233,23 @@ const barcodescanner = () => {
                   </CCol>
                   <CCol>
                     <CButton
-                      onClick={async () => {
-                        const res = await fetch(
-                          "http://localhost:8000/collect-package",
-                          {
-                            method: "POST",
-                            headers: {
-                              // Authorization: credentialResponse.credential,
-                              "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify({
-                              pic: picture,
-                              package_id: serialNumber,
-                            }),
-                          }
-                        );
-                        data = await res.json();
-                        console.log(data["result"]);
+                      onClick={() => {
+                        fetch("http://localhost:8000/collect-package", {
+                          method: "POST",
+                          headers: {
+                            // Authorization: credentialResponse.credential,
+                            "Content-Type": "application/json",
+                          },
+                          body: JSON.stringify({
+                            pic: picture,
+                            package_id: serialNumber,
+                          }),
+                        })
+                          .then((res) => res.json())
+                          .then((data) => {
+                            // data = await res.json();
+                            console.log(data["result"]);
+                          });
                       }}
                       color="primary"
                     >

@@ -101,21 +101,23 @@ const Camera = () => {
               </CCol>
               <CCol>
                 <CButton
-                  onClick={async () => {
-                    const res = await fetch("http://localhost:8000/camera", {
+                  onClick={() => {
+                    fetch("http://localhost:8000/camera", {
                       method: "POST",
                       headers: {
                         // Authorization: credentialResponse.credential,
                         "Content-Type": "application/json",
                       },
                       body: JSON.stringify({ pic: picture }),
+                    })
+                    .then((res) => res.json())
+                    // data = await res.json();
+                    // console.log(data);
+                    // </CCol>// .then((data) => {
+                    .then((data) => {
+                    setStudentName(data["owner_name"]);
+                    setPostDetails(data["package_number"]);
                     });
-                    // .then((res) => res.json())
-                    data = await res.json();
-                    // .then((data) => {
-                    setStudentName(data[owner_name]);
-                    setPostDetails(data[package_number]);
-                    // });
                   }}
                   color="primary"
                 >
@@ -143,7 +145,7 @@ const Camera = () => {
               </CCol>
               <CCol md={6}>
                 <CFormInput
-                  placeholder="Student Name"
+                  // placeholder="Student Name"
                   id="studentName"
                   label="Student Name"
                   value={studentName}
@@ -171,7 +173,7 @@ const Camera = () => {
               </CCol>
               <CCol md={6}>
                 <CFormInput
-                  placeholder="E.g.: 34429554513900"
+                  // placeholder="E.g.: 34429554513900"
                   label="Parcel Number"
                   value={postDetails}
                   id="postDetails"
@@ -200,13 +202,13 @@ const Camera = () => {
                       .then((res) => res.json())
                       .then((data) => {
                         {
-                          data["result"] === "success" ? (
-                            <CAlert color="primary">
-                              Data added succesfully!
-                            </CAlert>
-                          ) : (
-                            <CAlert color="primary">error adding data!</CAlert>
-                          );
+                          // data["result"] === "success" ? (
+                          //   <CAlert color="primary">
+                          //     Data added succesfully!
+                          //   </CAlert>
+                          // ) : (
+                          //   <CAlert color="primary">error adding data!</CAlert>
+                          // );
                         }
                       })
                       .catch((err) => {
