@@ -131,36 +131,6 @@ const barcodescanner = () => {
                 />
               </CCol>
               <CCol xs={12}>
-                {/* <CButton
-                          type="submit"
-                          onClick={() => {
-                            fetch("http://localhost:8000/add-package", {
-                              method: "POST",
-                              headers: {
-                                // Authorization: credentialResponse.credential,
-                                "Content-Type": "application/json",
-                              },
-                              body: JSON.stringify({
-                                package_number: postDetails,
-                                package_type: parcelType,
-                                owner_name: studentName,
-                              }),
-                            })
-                              .then((res) => res.json())
-                              .then((data) => {
-                                if (data["result"] === "success") {
-                                  <CAlert color="primary">Data added succesfully!</CAlert>;
-                                } else {
-                                  <CAlert color="primary">Error adding data!</CAlert>;
-                                }
-                              })
-                              .catch((err) => {
-                                console.log(err);
-                              });
-                          }}
-                        >
-                          Add Package
-                        </CButton> */}
                 <CButton
                   onClick={() => {
                     fetch("http://localhost:8000/modify-package", {

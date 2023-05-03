@@ -9,6 +9,11 @@ import {
   CCol,
   CContainer,
   CForm,
+  CModal,
+  CModalBody,
+  CModalHeader,
+  CModalFooter,
+  CModalTitle,
   CNavLink,
   CRow,
 } from "@coreui/react";
@@ -17,6 +22,7 @@ import jwt_decode from "jwt-decode";
 
 const Login = () => {
   const [loginSuccess, setSuccess] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
   return (
     <>
@@ -57,29 +63,31 @@ const Login = () => {
                                     })
                                       .then((res) => res.json())
                                       .then((data) => {
-                                        console.log(data);
-                                        console.log("Data Logged!");
-                                        localStorage.setItem(
-                                          "user_name",
-                                          data["name"]
-                                        );
-                                        localStorage.setItem(
-                                          "user_email",
-                                          data["email"]
-                                        );
-                                        localStorage.setItem(
-                                          "user_pic_url",
-                                          data["picture"]
-                                        );
-                                        localStorage.setItem(
-                                          "isAdmin",
-                                          data["isAdmin"]
-                                        );
+                                        if (data["result"] === "success") {
+                                          setSuccess(true);
+                                          localStorage.setItem(
+                                            "user_name",
+                                            data["name"]
+                                          );
+                                          localStorage.setItem(
+                                            "user_email",
+                                            data["email"]
+                                          );
+                                          localStorage.setItem(
+                                            "user_pic_url",
+                                            data["picture"]
+                                          );
+                                          localStorage.setItem(
+                                            "isAdmin",
+                                            data["isAdmin"]
+                                          );
+                                        } else {
+                                          setModalVisible(!modalVisible);
+                                        }
                                       })
                                       .catch((err) => {
                                         console.log(err);
                                       });
-                                    setSuccess(true);
                                   }}
                                   onError={() => {
                                     console.log("Login Failed");
@@ -90,6 +98,26 @@ const Login = () => {
                               </center>
                             </div>
                           </GoogleOAuthProvider>
+                          <CModal>
+                            <CModalHeader>
+                              <CModalTitle>Result</CModalTitle>
+                            </CModalHeader>
+                            <CModalBody>
+                              <p>
+                                Incorrect Credentials. Please login using
+                                correct credentials or try signing up
+                              </p>
+                            </CModalBody>
+                            <CModalFooter>
+                              <CButton
+                                color="secondary"
+                                onClick={() => setModalVisible(false)}
+                              >
+                                Cancel
+                              </CButton>
+                            </CModalFooter>
+                          </CModal>
+                          ;
                         </CRow>
                       </CForm>
                     </CCardBody>
@@ -102,7 +130,8 @@ const Login = () => {
                       <div>
                         <h2>Sign up</h2>
                         <p>
-                          If you are a new user, Enter your email address to create a new account.
+                          If you are a new user, Enter your email address to
+                          create a new account.
                         </p>
                         <CNavLink to="/register" component={NavLink}>
                           <CButton

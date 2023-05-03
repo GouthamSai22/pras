@@ -27,6 +27,7 @@ const AppHeader = () => {
   const sidebarShow = useSelector((state) => state.sidebarShow);
   
   // const isAdmin = false;
+  
   const isAdmin = JSON.parse(localStorage.getItem("isAdmin"));
 
   return (

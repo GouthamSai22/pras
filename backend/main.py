@@ -478,7 +478,9 @@ async def auth(details: dict = Depends(verify_auth_token), db: Session = Depends
             details["isAdmin"] = True
         elif user_object.role == "student":
             details["isAdmin"] = False
-    return details
+        details["result"] = "success"
+        return details
+    return {"result": "failure"}
 
 @app.post("/signup")
 async def signup(request: Request, details: dict = Depends(verify_auth_token), db: Session = Depends(get_db)):
